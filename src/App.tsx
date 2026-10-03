@@ -1,8 +1,26 @@
+import type { Patient } from "./types/patient";
+
 function App() {
+
+  const patient: Patient = {
+    id: crypto.randomUUID(),
+    room: "414",
+    moduleIds: [
+      "icu-core",
+      "sedation",
+      "restraints"
+    ]
+  };
+
   return (
     <main>
       <h1>Nursing Task Tracker</h1>
-      <p>Prototype — Not for clinical use</p>
+      
+      <p>Room: {patient.room}</p>
+
+      <p>
+        Modules: {patient.moduleIds.join(", ")}
+      </p>
     </main>
   );
 };
