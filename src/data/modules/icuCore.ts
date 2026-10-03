@@ -49,7 +49,19 @@ export const icuCore: CareModule = {
 
       schedule: {
         type: "frequency",
-        hours: 2
+        hours: 2,
+        anchorHour: 0
       }
+  },
+  {
+    id: "shift-screen",
+    name: "Shift Screen",
+    category: "chart",
+    workflow: "complete-and-chart",
+
+    schedule: {
+      type: "timed",
+      times: ["0800", "2000"]
+    }
   }]
 };

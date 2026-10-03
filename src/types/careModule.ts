@@ -6,4 +6,4 @@ export interface CareModule {
   description?: string;
 
   tasks: TaskDefinition[];
-}
+};
