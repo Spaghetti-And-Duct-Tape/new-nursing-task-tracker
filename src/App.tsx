@@ -1,16 +1,16 @@
+import { useState } from "react";
 import { defaultConfig } from "./data/defaultConfig";
-import { icuCore } from "./data/modules/icuCore";
 import { defaultDayShift, defaultNightShift } from "./data/shift";
 import type { Patient } from "./types/patient";
-import { generatePatientTasks } from "./utils/patient/generatePatientTasks";
-import { generateModuleTasks } from "./utils/scheduling/generateModuleTasks";
-import { getShiftRange } from "./utils/scheduling/getShiftRange";
+import { createAssignment } from "./utils/assignment/createAssignment";
+import type { Assignment } from "./types/assignment";
+import { advanceTaskStatus } from "./utils/tasks/advanceTaskStatus";
+import { AssignmentView } from "./components/assignment/assignmentView";
+import { addPatientToAssignment } from "./utils/assignment/addPatientToAssignment";
+import { AddPatientForm } from "./components/patient/addPatientForm";
 
-function App() {
 
-  const currentShift = defaultNightShift;
-
-  const patient: Patient = {
+  const patient414: Patient = {
     id: crypto.randomUUID(),
     room: "414",
     moduleIds: [
@@ -18,59 +18,104 @@ function App() {
       "sedation",
       "restraints"
     ],
-    tasks: [{
+    taskDefinition: [{
       id: "insulin",
       name: "Insulin",
       category: "medication",
-      workflow: "complete",
+      workflow: "complete-and-chart",
 
       schedule: {
         type: "frequency",
         hours: 4,
         anchorHour: 0
       }
-    }]
+    }],
+    taskInstances: []
   };
 
-  const shift = getShiftRange(
-    new Date(),
-    currentShift
-  );
+  const patient415: Patient = {
+    id: "patient-415",
+    room: "415",
 
-  const tasks = generatePatientTasks({
-    patient,
-    config: defaultConfig,
-    shiftStart: shift.start,
-    shiftEnd: shift.end
-  });
+    moduleIds: [
+      "icu-core"
+    ],
+
+    taskDefinition: [{
+      id: "metoprolol",
+      name: "Metoprolol",
+      category: "medication",
+      workflow: "complete-and-chart",
+
+      schedule: {
+        type: "frequency",
+        hours: 6,
+        anchorHour: 0
+      }
+    }],
+
+    taskInstances: []
+  };
+
+function App() {
+  const {modules} = defaultConfig;
+  const [assignment, setAssignment] = useState<Assignment>(() => 
+    createAssignment({
+      patients: [],
+      shift: defaultDayShift,
+      date: new Date(),
+      modules
+    })
+  );
+  
+  function handleTaskClick(
+    patientId: string,
+    taskId: string
+  ) {
+    setAssignment((previous) => ({
+      ...previous,
+      
+      patients: previous.patients.map((patient) => {
+        
+        if (patient.id !== patientId) 
+          return patient;
+        
+          return {
+            ...patient,
+            
+            taskInstances: patient.taskInstances.map(task =>
+              task.id === taskId
+                ? advanceTaskStatus(task)
+                : task
+            )
+          };
+      })
+    }));
+  };
+
+  function handleAddPatient(patient: Patient) {
+    setAssignment(prev => 
+      addPatientToAssignment({
+        assignment: prev,
+        patient,
+        modules
+      })
+    )
+  };
 
   return (
     <main>
-      <h1>Nursing Task Tracker</h1>
+      <h2>Nursing Task Tracker</h2>
 
-      <h2>{defaultDayShift.name} Shift</h2>
-      <p>Start: {shift.start.toLocaleString()}</p>
-      <p>End: {shift.end.toLocaleString()}</p>
-      
-      <h3>Room: {patient.room}</h3>
+      <AddPatientForm
+        modules={modules}
+        onAddPatient={handleAddPatient}
+      />
 
-      <p>
-        Modules: {patient.moduleIds.join(", ")}
-      </p>
-
-      <h4>Tasks</h4>
-      {tasks.map(task => (
-        <div key={task.id}>
-          {task.scheduledAt.toLocaleDateString()}
-          {" - "}
-          {task.scheduledAt.toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit"
-          })}
-          {" - "}
-          {task.name}
-        </div>
-      ))}
+      <AssignmentView
+        assignment={assignment}
+        onTaskClick={handleTaskClick} 
+      />
     </main>
   );
 };

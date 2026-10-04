@@ -27,9 +27,5 @@ export function generateModuleTasks({
         shiftStart,
         shiftEnd
       })
-    )
-    .sort((a, b) => 
-      a.scheduledAt.getTime() - 
-      b.scheduledAt.getTime()
     );
 };

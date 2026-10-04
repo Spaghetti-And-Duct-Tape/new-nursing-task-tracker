@@ -1,4 +1,4 @@
-import type { NursingConfig } from "../../types/config";
+import type { CareModule } from "../../types/careModule";
 import type { Patient } from "../../types/patient";
 import type { TaskInstance } from "../../types/task";
 import { generateModuleTasks } from "../scheduling/generateModuleTasks";
@@ -6,20 +6,20 @@ import { generateTasks } from "../scheduling/generateTasks";
 
 interface GeneratePatientTasksParams {
   patient: Patient;
-  config: NursingConfig;
+  modules: CareModule[];
   shiftStart: Date;
   shiftEnd: Date;
 };
 
 export function generatePatientTasks({
   patient,
-  config,
+  modules,
   shiftStart,
   shiftEnd
 }: GeneratePatientTasksParams): TaskInstance[] {
 
   const moduleTasks = patient.moduleIds.flatMap(moduleId => {
-    const module = config.modules.find(
+    const module = modules.find(
       module => module.id === moduleId
     );
 
@@ -34,7 +34,7 @@ export function generatePatientTasks({
     });
   });
 
-  const patientTasks = patient.tasks.flatMap(task => 
+  const patientTasks = patient.taskDefinition.flatMap(task => 
     generateTasks({
       task,
       patientId: patient.id,
@@ -49,7 +49,7 @@ export function generatePatientTasks({
     ...patientTasks
   ].sort(
     (a, b) => 
-      a.scheduledAt.getTime() -
+      a.scheduledAt.getTime() - 
       b.scheduledAt.getTime()
   );
 };

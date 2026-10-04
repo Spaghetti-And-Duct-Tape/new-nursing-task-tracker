@@ -1,9 +1,15 @@
-import type { TaskDefinition } from "./task";
+import type { TaskDefinition, TaskInstance } from "./task";
 
 export interface Patient {
   id: string;
   room: string;
   
   moduleIds: string[];
-  tasks: TaskDefinition[];
+
+  //Tasks belonging to the patient that persist 
+  //Every shift
+  taskDefinition: TaskDefinition[];
+
+  //All Tasks
+  taskInstances: TaskInstance[];
 };

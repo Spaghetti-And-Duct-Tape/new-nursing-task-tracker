@@ -97,14 +97,12 @@ function getFrequencyStart(
   frequency: number,
   anchorHour?: number
 ): Date {
-  const start = new Date(shiftStart);
-
-  if (anchorHour === undefined) return start;
+  const baseHour = anchorHour ?? 0
 
   const anchor = new Date(shiftStart);
 
   anchor.setHours(
-    anchorHour,
+    baseHour,
     0,
     0,
     0

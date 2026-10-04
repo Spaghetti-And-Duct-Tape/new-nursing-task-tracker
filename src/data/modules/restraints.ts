@@ -14,7 +14,7 @@ export const restraints: CareModule = {
       schedule: {
         type: "frequency",
         hours: 2,
-        anchor: "0800"
+        anchorHour: 0
       }
     },
 
