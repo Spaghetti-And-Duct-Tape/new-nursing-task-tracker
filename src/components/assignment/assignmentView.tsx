@@ -1,18 +1,22 @@
 import type { Assignment } from "../../types/assignment";
+import type { TaskInstance } from "../../types/task";
 import { PatientView } from "../patient/patientView";
 
 interface AssignmentViewProps {
   assignment: Assignment;
-
-  onTaskClick: (
-    patientId: string,
-    taskId: string
+  onTaskClick: (task: TaskInstance) => void;
+  onAddTask: (task: TaskInstance) => void;
+  onNoteChange: (
+    task: TaskInstance,
+    note: string 
   ) => void;
 };
 
 export function AssignmentView({
   assignment,
-  onTaskClick
+  onTaskClick,
+  onAddTask,
+  onNoteChange
 }: AssignmentViewProps) {
   return (
     <main>
@@ -20,13 +24,9 @@ export function AssignmentView({
         <PatientView
           key={patient.id}
           patient={patient}
-
-          onTaskClick={(taskId) => 
-            onTaskClick(
-              patient.id,
-              taskId
-            )
-          }
+          onTaskClick={onTaskClick}
+          onAddTask={onAddTask}
+          onNoteChange={onNoteChange}
         />
       ))}
     </main>

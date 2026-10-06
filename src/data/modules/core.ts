@@ -1,9 +1,11 @@
 import type { CareModule } from "../../types/careModule";
 
-export const icuCore: CareModule = {
-  id: "icu-core",
-  name: "ICU Core",
-  description: "Core recurring tasks for an ICU patient.",
+export const core: CareModule = {
+  id: "core",
+  name: "Core",
+  description: "Core recurring tasks for a patient.",
+
+  persistent: true,
 
   tasks: [{
       id: "temperature",

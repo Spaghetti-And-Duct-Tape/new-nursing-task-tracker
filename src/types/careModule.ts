@@ -5,5 +5,7 @@ export interface CareModule {
   name: string;
   description?: string;
 
+  persistent: boolean;
+
   tasks: TaskDefinition[];
 };

@@ -18,7 +18,7 @@ export function createAssignment({
   date,
   modules
 }: CreateAssignmentParams): Assignment {
-
+  
   const {
     start: shiftStart,
     end: shiftEnd

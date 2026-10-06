@@ -36,8 +36,10 @@ export interface TaskDefinition {
 export interface TaskInstance {
   id: string;
 
-  definitionId: string;
   patientId: string;
+  moduleId?: string;
+  definitionId: string;
+
 
   name: string;
   category: TaskCategory;

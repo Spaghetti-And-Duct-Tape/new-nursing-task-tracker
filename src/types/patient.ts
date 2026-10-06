@@ -8,7 +8,7 @@ export interface Patient {
 
   //Tasks belonging to the patient that persist 
   //Every shift
-  taskDefinition: TaskDefinition[];
+  taskDefinitions: TaskDefinition[];
 
   //All Tasks
   taskInstances: TaskInstance[];

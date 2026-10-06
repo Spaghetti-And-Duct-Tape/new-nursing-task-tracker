@@ -18,6 +18,9 @@ export function generatePatientTasks({
   shiftEnd
 }: GeneratePatientTasksParams): TaskInstance[] {
 
+  //Looks up all module IDs patient has and generates tasks 
+  //based from them 
+  
   const moduleTasks = patient.moduleIds.flatMap(moduleId => {
     const module = modules.find(
       module => module.id === moduleId
@@ -25,6 +28,7 @@ export function generatePatientTasks({
 
     if (!module) return [];
 
+    //Generates tasks from modules
     return generateModuleTasks({
       module,
       patientId: patient.id,
@@ -34,7 +38,8 @@ export function generatePatientTasks({
     });
   });
 
-  const patientTasks = patient.taskDefinition.flatMap(task => 
+  //Generates patient tasks that are meant to persist
+  const patientTasks = patient.taskDefinitions.flatMap(task => 
     generateTasks({
       task,
       patientId: patient.id,

@@ -30,11 +30,9 @@ export function getShiftRange(
     0
   );
 
-  //Using military time if end is small than start it must 
-  //be a new day
-  if (end <= start) {
-    end.setDate(end.getDate() + 1);
-  };
+  //If end hour is smaller than start it must 
+  //be in a new day
+  if (end <= start) end.setDate(end.getDate() + 1);
 
   return {
     start, 

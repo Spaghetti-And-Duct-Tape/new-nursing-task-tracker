@@ -6,6 +6,7 @@ interface GenerateTasksParams {
   source: TaskSource;
   shiftStart: Date;
   shiftEnd: Date;
+  moduleId?: string;
 };
 
 type GetInstanceParams =
@@ -13,6 +14,31 @@ type GetInstanceParams =
   {
     scheduledAt: Date;
   };
+
+//The time used for generation tasks
+//if it differs from shiftStart. I.E.
+//starting mid shift or inputting a task 
+//in the middle of the shift
+function generationStart(
+  shiftStart: Date,
+  currentTime: Date = new Date()
+) {
+  const graceStart = new Date(currentTime);
+
+  graceStart.setHours(
+    graceStart.getHours() - 1,
+    0,
+    0,
+    0
+  );
+
+  return new Date(
+    Math.max(
+      shiftStart.getTime(),
+      graceStart.getTime()
+    )
+  )
+};
 
 export function generateTasks(
   params: GenerateTasksParams
@@ -30,13 +56,15 @@ function getInstance({
   task,
   patientId,
   source,
-  scheduledAt
+  scheduledAt,
+  moduleId
 }: GetInstanceParams): TaskInstance {
   return {
     id: crypto.randomUUID(),
 
-    definitionId: task.id,
     patientId,
+    ...(moduleId && {moduleId}),
+    definitionId: task.id,
 
     name: task.name,
     category: task.category,
@@ -55,7 +83,8 @@ export function generateTimedTasks({
   patientId,
   source,
   shiftStart,
-  shiftEnd
+  shiftEnd,
+  moduleId
 }: GenerateTasksParams): TaskInstance[] {
 
   if (task.schedule.type !== "timed") return [];
@@ -75,7 +104,7 @@ export function generateTimedTasks({
       0
     );
 
-    if (scheduledAt < shiftStart) scheduledAt.setDate(
+    if (scheduledAt < generationStart(shiftStart)) scheduledAt.setDate(
       scheduledAt.getDate() + 1
     );
 
@@ -85,7 +114,8 @@ export function generateTimedTasks({
       task,
       patientId,
       source,
-      scheduledAt
+      scheduledAt,
+      moduleId
     }));
   });
 
@@ -109,9 +139,9 @@ function getFrequencyStart(
   );
 
   const frequencyMs = 
-    frequency * 60 * 60 * 1000;
+    frequency * 3_600_000;
 
-  while (anchor < shiftStart) {
+  while (anchor < generationStart(shiftStart)) {
     anchor.setTime(
       anchor.getTime() + frequencyMs
     );
@@ -125,7 +155,8 @@ export function generateFrequencyTasks({
   patientId,
   source,
   shiftStart,
-  shiftEnd
+  shiftEnd,
+  moduleId
 }: GenerateTasksParams): TaskInstance[] {
 
   //Only works on tasks with frequency
@@ -144,6 +175,7 @@ export function generateFrequencyTasks({
       task,
       patientId,
       source,
+      moduleId,
       scheduledAt: new Date(currentTime)
     }));
 

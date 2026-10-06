@@ -18,35 +18,38 @@ function getTaskDecoration(
 
 interface TaskItemProps {
   task: TaskInstance;
-  onClick: () => void;
+  handleTaskClick: () => void;
 };
 
 export function TaskItem({
   task,
-  onClick
+  handleTaskClick
 }: TaskItemProps) {
   return (
-    <button onClick={onClick}>
-      {task.scheduledAt.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit"
-      })}
-
-      {" - "}
-
-      <span
-        style={getTaskDecoration(task)}
-      >
-        {task.name}
-      </span>
+    <button 
+      onPointerDown={handleTaskClick}
+      style={{
+        margin: "10px 0"
+      }}
+    >
+      <span>
+        <span
+          style={getTaskDecoration(task)}
+        >
+          {task.name}
+        </span>
       
-      {" - "}
+        {" - "}
 
-      {task.completed 
-        ?  "✓" 
-        : "○"
-      }
-      {task.charted && "✓"}
+        {task.completed 
+          ?  "✓" 
+          : "○"
+        }
+        {task.charted && "✓"}
+      </span>
+      {task.note && (
+        <p>{task.note}</p>
+      )}
     </button>
   );
 };

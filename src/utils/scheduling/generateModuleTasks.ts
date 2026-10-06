@@ -17,7 +17,6 @@ export function generateModuleTasks({
   shiftStart,
   shiftEnd
 }: GenerateModuleTasksParams): TaskInstance[] {
-
   return module.tasks
     .flatMap(task => 
       generateTasks({
@@ -25,7 +24,8 @@ export function generateModuleTasks({
         patientId,
         source,
         shiftStart,
-        shiftEnd
+        shiftEnd,
+        moduleId: module.id
       })
     );
 };

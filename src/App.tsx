@@ -8,89 +8,70 @@ import { advanceTaskStatus } from "./utils/tasks/advanceTaskStatus";
 import { AssignmentView } from "./components/assignment/assignmentView";
 import { addPatientToAssignment } from "./utils/assignment/addPatientToAssignment";
 import { AddPatientForm } from "./components/patient/addPatientForm";
-
-
-  const patient414: Patient = {
-    id: crypto.randomUUID(),
-    room: "414",
-    moduleIds: [
-      "icu-core",
-      "sedation",
-      "restraints"
-    ],
-    taskDefinition: [{
-      id: "insulin",
-      name: "Insulin",
-      category: "medication",
-      workflow: "complete-and-chart",
-
-      schedule: {
-        type: "frequency",
-        hours: 4,
-        anchorHour: 0
-      }
-    }],
-    taskInstances: []
-  };
-
-  const patient415: Patient = {
-    id: "patient-415",
-    room: "415",
-
-    moduleIds: [
-      "icu-core"
-    ],
-
-    taskDefinition: [{
-      id: "metoprolol",
-      name: "Metoprolol",
-      category: "medication",
-      workflow: "complete-and-chart",
-
-      schedule: {
-        type: "frequency",
-        hours: 6,
-        anchorHour: 0
-      }
-    }],
-
-    taskInstances: []
-  };
+import type { TaskDefinition, TaskInstance } from "./types/task";
+import { generateTasks } from "./utils/scheduling/generateTasks";
+import { generatePatientTasks } from "./utils/patient/generatePatientTasks";
 
 function App() {
   const {modules} = defaultConfig;
+
   const [assignment, setAssignment] = useState<Assignment>(() => 
     createAssignment({
       patients: [],
-      shift: defaultDayShift,
+      shift: defaultNightShift,
       date: new Date(),
       modules
     })
   );
-  
+
   function handleTaskClick(
-    patientId: string,
-    taskId: string
+    task: TaskInstance
   ) {
-    setAssignment((previous) => ({
-      ...previous,
+    setAssignment(prev => ({
+      ...prev,
       
-      patients: previous.patients.map((patient) => {
+      patients: prev.patients.map(patient => {
         
-        if (patient.id !== patientId) 
+        if (patient.id !== task.patientId) 
           return patient;
         
           return {
             ...patient,
             
-            taskInstances: patient.taskInstances.map(task =>
-              task.id === taskId
-                ? advanceTaskStatus(task)
-                : task
+            taskInstances: patient.taskInstances.map(instance =>
+              instance.id === task.id
+                ? advanceTaskStatus(instance)
+                : instance
             )
           };
       })
     }));
+  };
+
+  function handleNoteChange(
+    task: TaskInstance,
+    note: string
+  ) {
+    setAssignment(prev => ({
+      ...prev,
+
+      patients: prev.patients.map(patient => {
+        if (patient.id !== task.patientId)
+          return patient;
+
+        return {
+          ...patient,
+
+          taskInstances: patient.taskInstances.map(instance => 
+            instance.id === task.id
+              ? {
+                ...instance,
+                note
+              } : instance
+          )
+        }
+      })
+    }))
   };
 
   function handleAddPatient(patient: Patient) {
@@ -103,19 +84,177 @@ function App() {
     )
   };
 
+  function handleAddTask(task: TaskInstance) {
+    setAssignment(prev => ({
+      ...prev,
+
+      patients: prev.patients.map(patient => {
+        if (patient.id !== task.patientId)
+          return patient;
+
+        return {
+          ...patient,
+
+          taskInstances: [
+            ...patient.taskInstances,
+            task
+          ].sort(
+            (a, b) => 
+              a.scheduledAt.getTime() -
+              b.scheduledAt.getTime()
+          )
+        };
+      })
+    }));
+  };
+  
+  function addTaskDefinition() {
+    setAssignment(prev => {
+      if (prev.patients.length === 0)
+        return prev;
+      
+      const patientId = prev.patients[0].id;
+      
+      const task: TaskDefinition = {
+        id: "insulin",
+        name: "Insulin",
+        category: "medication",
+        workflow: "complete-and-chart",
+        
+        schedule: {
+          type: "frequency",
+          hours: 4
+        }
+      };
+      
+      const instances = generateTasks({
+        task,
+        patientId,
+        source: "manual",
+        shiftStart: prev.shiftStart,
+        shiftEnd: prev.shiftEnd
+      });
+      
+      return {
+        ...prev,
+        
+        patients: prev.patients.map(patient => {
+          if (patient.id !== patientId)
+            return patient;
+          
+          return {
+            ...patient,
+            
+            taskDefinitions: [
+              ...patient.taskDefinitions,
+              task
+            ],
+            
+            taskInstances: [
+              ...patient.taskInstances,
+              ...instances
+            ].sort(
+              (a, b) =>
+                a.scheduledAt.getTime() -
+                b.scheduledAt.getTime()
+            )
+          };
+        })
+      };
+    });
+  };
+
+  function resetPatient() {
+    setAssignment(prev => {
+      if (prev.patients.length === 0)
+        return prev;
+      
+      const patientId = prev.patients[0].id;
+
+      return {
+        ...prev,
+
+        patients: prev.patients.map(patient => {
+          if (patient.id !== patientId)
+            return patient;
+
+          return {
+            ...patient,
+
+            taskInstances: []
+          }
+        })
+      }
+    });
+  };
+
+  function returnPatient() {
+    setAssignment(prev => {
+      if (prev.patients.length === 0) 
+        return prev;
+
+      const patientId = prev.patients[0].id;
+
+      return {
+        ...prev,
+
+        patients: prev.patients.map(patient => {
+          if (patient.id !== patientId)
+            return patient;
+
+          return {
+            ... patient,
+            
+            taskInstances: generatePatientTasks({
+              patient,
+              modules: defaultConfig.modules,
+              shiftStart: prev.shiftStart,
+              shiftEnd: prev.shiftEnd
+            })
+          }
+        })
+      }
+    })
+  };
+
   return (
     <main>
       <h2>Nursing Task Tracker</h2>
 
       <AddPatientForm
-        modules={modules}
         onAddPatient={handleAddPatient}
       />
 
       <AssignmentView
         assignment={assignment}
         onTaskClick={handleTaskClick} 
+        onAddTask={handleAddTask}
+        onNoteChange={handleNoteChange}
       />
+
+      {assignment.patients.length !== 0 &&
+      <>
+        <button
+          onClick={addTaskDefinition}
+        >
+          Add Task Definition
+        </button>
+
+        
+        <button
+          onClick={resetPatient}
+        >
+          Reset Patient
+        </button>
+
+        
+        <button
+          onClick={returnPatient}
+        >
+          Return Patient
+        </button>
+        </>
+      }
     </main>
   );
 };

@@ -14,7 +14,6 @@ export function addPatientToAssignment({
   patient,
   modules
 }: AddPatientParams): Assignment {
-  
   const newPatient: Patient = {
     ...patient,
 
@@ -25,7 +24,7 @@ export function addPatientToAssignment({
       shiftEnd: assignment.shiftEnd
     })
   };
-
+  
   return {
     ...assignment,
 
