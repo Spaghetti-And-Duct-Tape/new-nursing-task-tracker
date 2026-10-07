@@ -3,9 +3,12 @@ import type { TaskCategory, TaskInstance, TaskWorkflow } from "../../types/task"
 import { createTaskId } from "../../utils/tasks/createTaskId";
 import { toDateTimeLocal } from "../../utils/utils";
 
-interface AddTaskFormProps {
+interface AddInstanceFormProps {
   patientId: string;
   onAddTask: (task: TaskInstance) => void;
+  setActiveForm: React.Dispatch<
+    React.SetStateAction<"definition" | "instance" | null>
+  >;
 };
 
 interface TaskInstanceForm {
@@ -19,7 +22,8 @@ interface TaskInstanceForm {
 export function AddInstanceForm({
   patientId,
   onAddTask,
-}: AddTaskFormProps) {
+  setActiveForm
+}: AddInstanceFormProps) {
   const [instance, setInstance] = useState<TaskInstanceForm>({
     name: "",
     category: "chart",
@@ -34,7 +38,7 @@ export function AddInstanceForm({
     setInstance(prev => ({
       ...prev,
       [e.target.name]: e.target.value
-    }))
+    }));
   };
 
   function handleSubmit(
@@ -58,8 +62,8 @@ export function AddInstanceForm({
       completed: false,
       charted: false,
 
-      category: "chart",
-      workflow: "complete-and-chart"
+      category: instance.category,
+      workflow: instance.workflow
     };
 
     onAddTask(task);
@@ -79,7 +83,48 @@ export function AddInstanceForm({
       }} 
       onSubmit={handleSubmit}
     >
-      <h2>Add Task</h2>
+      <button
+        type="button"
+        onClick={() => 
+          setActiveForm(null)
+        }
+      >
+        x
+      </button>
+
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          gap: "10px",
+          flexShrink: 0
+        }}
+      >
+        <button
+          style={{
+            width: "50%"
+          }}
+          onClick={() => 
+            setActiveForm("instance")
+          }
+          type="button"
+        >
+          One Time
+        </button>
+        <button
+          style={{
+            width: "50%"
+          }}
+          onClick={() => 
+            setActiveForm("definition")
+          }
+          type="button"
+        >
+          Routine
+        </button>
+      </div>
+
+      <h2>Add One Time Task</h2>
 
       <input
         name="name"

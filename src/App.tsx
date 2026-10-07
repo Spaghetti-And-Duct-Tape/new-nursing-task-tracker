@@ -23,7 +23,7 @@ function App() {
       modules
     })
   );
-
+  
   function handleTaskClick(
     task: TaskInstance
   ) {
@@ -108,27 +108,17 @@ function App() {
     }));
   };
   
-  function addTaskDefinition() {
+  function handleAddDefinition(
+    patientId: string,
+    definition: TaskDefinition,
+    persistent: boolean
+  ) {
     setAssignment(prev => {
       if (prev.patients.length === 0)
         return prev;
       
-      const patientId = prev.patients[0].id;
-      
-      const task: TaskDefinition = {
-        id: "insulin",
-        name: "Insulin",
-        category: "medication",
-        workflow: "complete-and-chart",
-        
-        schedule: {
-          type: "frequency",
-          hours: 4
-        }
-      };
-      
       const instances = generateTasks({
-        task,
+        task: definition,
         patientId,
         source: "manual",
         shiftStart: prev.shiftStart,
@@ -145,10 +135,12 @@ function App() {
           return {
             ...patient,
             
-            taskDefinitions: [
-              ...patient.taskDefinitions,
-              task
-            ],
+            taskDefinitions: persistent
+              ? [
+                ...patient.taskDefinitions,
+                definition
+              ] 
+              : patient.taskDefinitions,
             
             taskInstances: [
               ...patient.taskInstances,
@@ -229,18 +221,12 @@ function App() {
         assignment={assignment}
         onTaskClick={handleTaskClick} 
         onAddTask={handleAddTask}
+        onAddDefinition={handleAddDefinition}
         onNoteChange={handleNoteChange}
       />
 
       {assignment.patients.length !== 0 &&
       <>
-        <button
-          onClick={addTaskDefinition}
-        >
-          Add Task Definition
-        </button>
-
-        
         <button
           onClick={resetPatient}
         >

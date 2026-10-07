@@ -15,7 +15,7 @@ export const taysCore: CareModule = {
 
       schedule: {
         type: "timed",
-        times: ["0600"],
+        times: ["0600", "1800"],
       }
     }, {
       id: "delirium",
@@ -25,7 +25,7 @@ export const taysCore: CareModule = {
 
       schedule: {
         type: "timed",
-        times: ["0600"],
+        times: ["0600", "1800"],
       }
     }, {
       id: "oral-care",
@@ -35,7 +35,7 @@ export const taysCore: CareModule = {
 
       schedule: {
         type: "timed",
-        times: ["0600"],
+        times: ["0600", "1800"],
       }
     }, {
       id: "is",
@@ -45,7 +45,7 @@ export const taysCore: CareModule = {
 
       schedule: {
         type: "timed",
-        times: ["0600"],
+        times: ["0600", "1800"],
       }
     }, {
       id: "ambulation",
@@ -55,7 +55,7 @@ export const taysCore: CareModule = {
 
       schedule: {
         type: "timed",
-        times: ["0600"],
+        times: ["0600", "1800"],
       }
     }, {
       id: "i-o",
@@ -65,7 +65,7 @@ export const taysCore: CareModule = {
 
       schedule: {
         type: "timed",
-        times: ["0600"],
+        times: ["0600", "1800"],
       }
     },]
 };

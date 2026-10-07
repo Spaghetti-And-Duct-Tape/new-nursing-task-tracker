@@ -1,4 +1,5 @@
 import type { TaskDefinition, TaskInstance, TaskSource } from "../../types/task";
+import { frequencyInMilliseconds } from "../utils";
 
 interface GenerateTasksParams {
   task: TaskDefinition;
@@ -92,14 +93,13 @@ export function generateTimedTasks({
   const instances: TaskInstance[] = [];
 
   task.schedule.times.forEach(time => {
-    const hour = parseInt(time.slice(0, 2));
-    const minute = parseInt(time.slice(2, 4));
+    const [hours, minutes] = time.split(":").map(Number);
 
     const scheduledAt = new Date(shiftStart);
 
     scheduledAt.setHours(
-      hour,
-      minute,
+      hours,
+      minutes,
       0,
       0
     );
@@ -125,21 +125,24 @@ export function generateTimedTasks({
 function getFrequencyStart(
   shiftStart: Date,
   frequency: number,
-  anchorHour?: number
+  anchorHour?: string
 ): Date {
-  const baseHour = anchorHour ?? 0
+  const [hours, minutes] = 
+    (anchorHour ?? "00:00")
+      .split(":")
+      .map(Number);
 
   const anchor = new Date(shiftStart);
 
   anchor.setHours(
-    baseHour,
+    hours, 
+    minutes,
     0,
     0,
-    0
   );
 
   const frequencyMs = 
-    frequency * 3_600_000;
+    frequencyInMilliseconds(frequency)
 
   while (anchor < generationStart(shiftStart)) {
     anchor.setTime(
@@ -167,10 +170,10 @@ export function generateFrequencyTasks({
   const currentTime = getFrequencyStart(
     shiftStart,
     task.schedule.hours,
-    task.schedule.anchorHour
+    task.schedule.anchorTime
   );
 
-  while (currentTime <= shiftEnd) {
+  while (currentTime <= shiftEnd) {    
     instances.push(getInstance({
       task,
       patientId,
@@ -179,8 +182,9 @@ export function generateFrequencyTasks({
       scheduledAt: new Date(currentTime)
     }));
 
-    currentTime.setHours(
-      currentTime.getHours() + task.schedule.hours
+    currentTime.setTime(
+      currentTime.getTime() + 
+      frequencyInMilliseconds(task.schedule.hours)
     );
   };
 

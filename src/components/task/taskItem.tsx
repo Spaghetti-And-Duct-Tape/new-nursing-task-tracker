@@ -32,6 +32,10 @@ export function TaskItem({
         margin: "10px 0"
       }}
     >
+      {task.scheduledAt.toLocaleDateString()}
+      {task.scheduledAt.toTimeString()}
+      
+      {" - "}
       <span>
         <span
           style={getTaskDecoration(task)}

@@ -17,7 +17,7 @@ export type TaskSchedule =
   | {
     type: "frequency";
     hours: number;
-    anchorHour?: number;
+    anchorTime?: string;
   } | {
     type: "timed";
     times: string[];

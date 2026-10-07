@@ -1,15 +1,21 @@
 import React, { useState } from "react";
 import type { Patient } from "../../types/patient";
-import type { TaskInstance } from "../../types/task";
+import type { TaskDefinition, TaskInstance } from "../../types/task";
 import { TaskItem } from "../task/taskItem";
 import { TaskNoteEditor } from "../task/taskNoteEditor";
 import { AddInstanceForm } from "../task/addInstanceForm";
 import { getHour } from "../../utils/utils";
+import { AddDefinitionForm } from "../task/addDefinitionForm";
 
 interface PatientViewProps {
   patient: Patient;
   onTaskClick: (task: TaskInstance) => void;
   onAddTask: (task: TaskInstance) => void;
+  onAddDefinition: (
+    patientId: string,
+    definition: TaskDefinition,
+    persistent: boolean
+  ) => void;
   onNoteChange: (
     task: TaskInstance,
     note: string 
@@ -20,11 +26,16 @@ export function PatientView({
   patient,
   onTaskClick,
   onAddTask,
+  onAddDefinition,
   onNoteChange
 }: PatientViewProps) {
   const [activeTaskId, setActiveTaskId] = useState<
     string | null
   > (null);
+
+  const [activeForm, setActiveForm] = useState<
+  "definition" | "instance" | null
+  >(null)
 
   function handleTaskClick(task: TaskInstance) {
     onTaskClick(task);
@@ -47,10 +58,29 @@ export function PatientView({
     >
       <h2>Room {patient.room}</h2>
 
-      <AddInstanceForm
-        patientId={patient.id}
-        onAddTask={onAddTask}
-      />
+      {activeForm === null && (
+        <button
+          onClick={() => setActiveForm("instance")}
+        >
+          +
+        </button>
+      )}
+
+      {activeForm === "instance" && (
+        <AddInstanceForm
+          patientId={patient.id}
+          onAddTask={onAddTask}
+          setActiveForm={setActiveForm}
+        />
+      )}
+
+      {activeForm === "definition" && (
+        <AddDefinitionForm
+          patientId={patient.id}
+          onAddDefinition={onAddDefinition}
+          setActiveForm={setActiveForm}
+        />
+      )}
 
       {patient.taskInstances.length}
 
@@ -93,25 +123,3 @@ export function PatientView({
     </section>
   )
 };
-
-/*
-
-{patient.taskInstances.map((task) => (
-        <React.Fragment
-          key={task.id}
-        >
-          <TaskItem
-            task={task}
-            onClick={() => handleTaskClick(task)} 
-          />
-
-          {activeTaskId === task.id && (
-            <TaskNoteEditor
-              task={task} 
-              onNoteChange={onNoteChange}
-            />
-          )}
-        </React.Fragment>
-      ))}
-
-*/
