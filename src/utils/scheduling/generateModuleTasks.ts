@@ -5,6 +5,7 @@ import { generateTasks } from "./generateTasks";
 interface GenerateModuleTasksParams {
   module: CareModule;
   patientId: string;
+  patientModuleId: string;
   source: TaskSource;
   shiftStart: Date;
   shiftEnd: Date;
@@ -13,6 +14,7 @@ interface GenerateModuleTasksParams {
 export function generateModuleTasks({
   module, 
   patientId,
+  patientModuleId,
   source,
   shiftStart,
   shiftEnd
@@ -25,7 +27,7 @@ export function generateModuleTasks({
         source,
         shiftStart,
         shiftEnd,
-        moduleId: module.id
+        moduleId: patientModuleId,
       })
     );
 };

@@ -23,9 +23,13 @@ export function AddPatientForm({
     const patient: Patient = {
       id: crypto.randomUUID(),
       room: trimmedRoom,
-
-      moduleIds: defaultConfig.modules.map(
-        module => module.id
+      modules: defaultConfig.modules.map(
+        module => ({
+          id: crypto.randomUUID(),
+          moduleId: module.id,
+          addedAt: new Date(),
+          persistent: module.persistent
+        })
       ),
       
       taskDefinitions: [],

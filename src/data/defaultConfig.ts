@@ -1,7 +1,5 @@
 import type { NursingConfig } from "../types/config";
-import { bloodTransfusion } from "./modules/bloodTransfusion";
 import { core } from "./modules/core";
-import { taysCore } from "./modules/taylorsCore";
 import { defaultDayShift, defaultNightShift } from "./shift";
 
 export const defaultConfig: NursingConfig = {
@@ -16,6 +14,6 @@ export const defaultConfig: NursingConfig = {
   ],
 
   modules: [
-    bloodTransfusion
+    core,
   ]
 };

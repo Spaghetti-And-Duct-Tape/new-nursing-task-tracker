@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { defaultConfig } from "./data/defaultConfig";
 import { defaultDayShift, defaultNightShift } from "./data/shift";
-import type { Patient } from "./types/patient";
+import type { Patient, PatientModule } from "./types/patient";
 import { createAssignment } from "./utils/assignment/createAssignment";
 import type { Assignment } from "./types/assignment";
 import { advanceTaskStatus } from "./utils/tasks/advanceTaskStatus";
@@ -11,15 +11,31 @@ import { AddPatientForm } from "./components/patient/addPatientForm";
 import type { TaskDefinition, TaskInstance } from "./types/task";
 import { generateTasks } from "./utils/scheduling/generateTasks";
 import { generatePatientTasks } from "./utils/patient/generatePatientTasks";
+import type { CareModule } from "./types/careModule";
+import { bloodTransfusion } from "./data/modules/bloodTransfusion";
+
+const date = new Date();
+
+  date.setDate(
+    date.getDate()
+  );
+
+  date.setHours(
+    7,
+    0,
+    0,
+    0
+  );
+
+ export const testDate = date;
 
 function App() {
   const {modules} = defaultConfig;
-
   const [assignment, setAssignment] = useState<Assignment>(() => 
     createAssignment({
       patients: [],
-      shift: defaultNightShift,
-      date: new Date(),
+      shift: defaultDayShift,
+      date: testDate,
       modules
     })
   );
@@ -209,6 +225,67 @@ function App() {
     })
   };
 
+  function handleAddCareModule(
+    patientId: string,
+    module: CareModule
+  ) {
+    setAssignment(prev => {
+      const patient = prev.patients.find(
+        patient => patient.id === patientId
+      );
+
+      if (!patient) return prev;
+
+      if (
+        module.persistent
+        && patient.modules.some(m => m.moduleId === module.id)
+      ) return prev;
+
+      const instances = module.tasks.flatMap(task => 
+        generateTasks({
+          task,
+          patientId,
+          moduleId: module.id,
+          source: "system",
+          shiftStart: prev.shiftStart,
+          shiftEnd: prev.shiftEnd,
+        })
+      );
+
+      return {
+        ...prev,
+
+        patients: prev.patients.map(patient => {
+          if (patient.id !== patientId)
+            return patient;
+
+          return {
+            ...patient,
+
+            modules: [
+                ...patient.modules,
+                {
+                  id: crypto.randomUUID(),
+                  moduleId: module.id,
+                  addedAt: new Date(),
+                  persistent: module.persistent
+                }
+            ],
+
+            taskInstances: [
+              ...patient.taskInstances,
+              ...instances
+            ].sort(
+              (a, b) => 
+                a.scheduledAt.getTime() - 
+              b.scheduledAt.getTime()
+            )
+          };
+        })
+      };
+    });
+  };
+
   return (
     <main>
       <h2>Nursing Task Tracker</h2>
@@ -223,6 +300,7 @@ function App() {
         onAddTask={handleAddTask}
         onAddDefinition={handleAddDefinition}
         onNoteChange={handleNoteChange}
+        onAddModule={handleAddCareModule}
       />
 
       {assignment.patients.length !== 0 &&
@@ -238,6 +316,14 @@ function App() {
           onClick={returnPatient}
         >
           Return Patient
+        </button>
+
+        
+        
+        <button
+          onClick={() => handleAddCareModule(assignment.patients[0].id, bloodTransfusion)}
+        >
+          Add blood transfusion
         </button>
         </>
       }

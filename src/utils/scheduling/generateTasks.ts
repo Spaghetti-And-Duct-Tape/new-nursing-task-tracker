@@ -1,5 +1,6 @@
+import { testDate } from "../../App";
 import type { TaskDefinition, TaskInstance, TaskSource } from "../../types/task";
-import { frequencyInMilliseconds } from "../utils";
+import { addOffsetMin, getScheduledAt } from "../utils";
 
 interface GenerateTasksParams {
   task: TaskDefinition;
@@ -27,7 +28,7 @@ function generationStart(
   const graceStart = new Date(currentTime);
 
   graceStart.setHours(
-    graceStart.getHours() - 1,
+    graceStart.getHours() - 24,
     0,
     0,
     0
@@ -39,18 +40,6 @@ function generationStart(
       graceStart.getTime()
     )
   )
-};
-
-export function generateTasks(
-  params: GenerateTasksParams
-): TaskInstance[] {
-  switch (params.task.schedule.type) {
-    case "frequency":
-      return generateFrequencyTasks(params);
-
-    case "timed":
-      return generateTimedTasks(params);
-  };
 };
 
 function getInstance({
@@ -79,7 +68,51 @@ function getInstance({
   };
 };
 
-export function generateTimedTasks({
+export function generateTasks(
+  params: GenerateTasksParams
+): TaskInstance[] {
+  const {
+    task, 
+    patientId, 
+    source, 
+    shiftStart, 
+    shiftEnd, 
+    moduleId
+  } = params;
+  const { schedule } = task;
+
+  const instances: TaskInstance[] = [];
+  const start = generationStart(shiftStart);
+
+  schedule.times.forEach(time => {
+    const scheduledAt = addOffsetMin(
+      getScheduledAt(time, shiftStart), 
+      schedule.offset
+    );
+
+    for (let i = 0; i < schedule.repeat; i++) {
+      const repeatedAt = addOffsetMin(
+        scheduledAt,
+        i * schedule.interval
+      );
+
+      if (repeatedAt < start) continue;
+      if (repeatedAt > shiftEnd) break;
+      
+      instances.push(getInstance({
+        task,
+        patientId,
+        source,
+        scheduledAt: repeatedAt,
+        moduleId
+      }));
+    };
+  });
+
+  return instances
+};
+
+/*export function generateTimedTasks({
   task,
   patientId,
   source,
@@ -189,4 +222,4 @@ export function generateFrequencyTasks({
   };
 
   return instances;
-};
+};*/

@@ -1,5 +1,4 @@
 import type { CareModule } from "../../types/careModule";
-import { getFutureStringTime } from "../../utils/utils";
 
 export const bloodTransfusion: CareModule = {
   id: "blood-transfuion",
@@ -9,27 +8,28 @@ export const bloodTransfusion: CareModule = {
   persistent: false,
 
   tasks: [{
-      id: "temperature",
-      name: "Temperature - Blood Transfusion 15 minutes",
+      id: "blood-transfusion-temperature",
+      name: "Blood Transfusion - Temperature and vitals",
       category: "chart",
       workflow: "complete-and-chart",
 
       schedule: {
-        type: "timed",
-        times: [getFutureStringTime(
-          new Date(),
-          15
-        )],
+        times: ["now"],
+        offset: 0,
+        interval: 15,
+        repeat: 2
       }
     }, {
-      id: "temperature",
-      name: "Temperature - Blood Transfusion Hourly",
+      id: "blood-transfusion-temperature",
+      name: "Blood Transfusion - Temperature and vitals",
       category: "chart",
       workflow: "complete-and-chart",
 
       schedule: {
-        type: "frequency",
-        hours: 1
+        times: ["hour"],
+        offset: 60,
+        interval: 60,
+        repeat: 4
       }
     }]
 };

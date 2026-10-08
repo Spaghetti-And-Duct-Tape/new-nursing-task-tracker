@@ -2,70 +2,82 @@ import type { CareModule } from "../../types/careModule";
 
 export const taysCore: CareModule = {
   id: "taysCore",
-  name: "Taylor's Core",
-  description: "Core recurring tasks for Taylor's Patients.",
+  name: "Tay Tay's Core",
+  description: "Core recurring tasks for Tay Tay's Patients.",
 
   persistent: true,
 
   tasks: [{
-      id: "bmat",
+      id: "tays-bmat",
       name: "BMAT",
       category: "chart",
       workflow: "chart",
 
       schedule: {
-        type: "timed",
-        times: ["0600", "1800"],
+        times: ["06:00", "18:00"],
+        offset: 0,
+        interval: 240,
+        repeat: 1
       }
     }, {
-      id: "delirium",
+      id: "tays-delirium",
       name: "Delirium",
       category: "chart",
       workflow: "chart",
 
       schedule: {
-        type: "timed",
-        times: ["0600", "1800"],
+        times: ["06:00", "18:00"],
+        offset: 0,
+        interval: 240,
+        repeat: 1
       }
     }, {
-      id: "oral-care",
+      id: "tays-oral-care",
       name: "Oral Care",
       category: "chart",
       workflow: "chart",
 
       schedule: {
-        type: "timed",
-        times: ["0600", "1800"],
+        times: ["06:00", "18:00"],
+        offset: 0,
+        interval: 240,
+        repeat: 1
       }
     }, {
-      id: "is",
+      id: "tays-is",
       name: "IS",
       category: "chart",
       workflow: "chart",
 
       schedule: {
-        type: "timed",
-        times: ["0600", "1800"],
+        times: ["06:00", "18:00"],
+        offset: 0,
+        interval: 240,
+        repeat: 1
       }
     }, {
-      id: "ambulation",
+      id: "tays-ambulation",
       name: "Ambulation",
       category: "chart",
       workflow: "chart",
 
       schedule: {
-        type: "timed",
-        times: ["0600", "1800"],
+        times: ["06:00", "18:00"],
+        offset: 0,
+        interval: 240,
+        repeat: 1
       }
     }, {
-      id: "i-o",
+      id: "tays-i-o",
       name: "I + O",
       category: "chart",
       workflow: "chart",
 
       schedule: {
-        type: "timed",
-        times: ["0600", "1800"],
+        times: ["06:00", "18:00"],
+        offset: 0,
+        interval: 240,
+        repeat: 1
       }
     },]
 };

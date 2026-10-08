@@ -1,4 +1,5 @@
 import type { Assignment } from "../../types/assignment";
+import type { CareModule } from "../../types/careModule";
 import type { TaskDefinition, TaskInstance } from "../../types/task";
 import { PatientView } from "../patient/patientView";
 
@@ -15,6 +16,10 @@ interface AssignmentViewProps {
     task: TaskInstance,
     note: string 
   ) => void;
+  onAddModule: (
+    patientId: string,
+    module: CareModule
+  ) => void;
 };
 
 export function AssignmentView({
@@ -22,7 +27,8 @@ export function AssignmentView({
   onTaskClick,
   onAddTask,
   onAddDefinition,
-  onNoteChange
+  onNoteChange,
+  onAddModule
 }: AssignmentViewProps) {
   return (
     <main>
@@ -34,6 +40,7 @@ export function AssignmentView({
           onAddTask={onAddTask}
           onAddDefinition={onAddDefinition}
           onNoteChange={onNoteChange}
+          onAddModule={onAddModule}
         />
       ))}
     </main>

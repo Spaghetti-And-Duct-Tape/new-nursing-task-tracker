@@ -6,6 +6,8 @@ import { TaskNoteEditor } from "../task/taskNoteEditor";
 import { AddInstanceForm } from "../task/addInstanceForm";
 import { getHour } from "../../utils/utils";
 import { AddDefinitionForm } from "../task/addDefinitionForm";
+import { AddModuleForm } from "../task/addModuleForm";
+import type { CareModule } from "../../types/careModule";
 
 interface PatientViewProps {
   patient: Patient;
@@ -20,6 +22,10 @@ interface PatientViewProps {
     task: TaskInstance,
     note: string 
   ) => void;
+  onAddModule: (
+    patientId: string,
+    module: CareModule
+  ) => void;
 }
 
 export function PatientView({
@@ -27,14 +33,15 @@ export function PatientView({
   onTaskClick,
   onAddTask,
   onAddDefinition,
-  onNoteChange
+  onNoteChange,
+  onAddModule
 }: PatientViewProps) {
   const [activeTaskId, setActiveTaskId] = useState<
     string | null
   > (null);
 
   const [activeForm, setActiveForm] = useState<
-  "definition" | "instance" | null
+  "module" | "definition" | "instance" | null
   >(null)
 
   function handleTaskClick(task: TaskInstance) {
@@ -78,6 +85,14 @@ export function PatientView({
         <AddDefinitionForm
           patientId={patient.id}
           onAddDefinition={onAddDefinition}
+          setActiveForm={setActiveForm}
+        />
+      )}
+
+      {activeForm === "module" && (
+        <AddModuleForm
+          patient={patient}
+          onAddModule={onAddModule}
           setActiveForm={setActiveForm}
         />
       )}

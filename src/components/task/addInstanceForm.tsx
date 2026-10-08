@@ -7,7 +7,7 @@ interface AddInstanceFormProps {
   patientId: string;
   onAddTask: (task: TaskInstance) => void;
   setActiveForm: React.Dispatch<
-    React.SetStateAction<"definition" | "instance" | null>
+    React.SetStateAction<"module" | "definition" | "instance" | null>
   >;
 };
 
@@ -99,10 +99,9 @@ export function AddInstanceForm({
           gap: "10px",
           flexShrink: 0
         }}
-      >
-        <button
+      ><button
           style={{
-            width: "50%"
+            width: "33%"
           }}
           onClick={() => 
             setActiveForm("instance")
@@ -113,7 +112,7 @@ export function AddInstanceForm({
         </button>
         <button
           style={{
-            width: "50%"
+            width: "33%"
           }}
           onClick={() => 
             setActiveForm("definition")
@@ -121,6 +120,17 @@ export function AddInstanceForm({
           type="button"
         >
           Routine
+        </button>
+        <button
+          style={{
+            width: "33%"
+          }}
+          onClick={() => 
+            setActiveForm("module")
+          }
+          type="button"
+        >
+          Module
         </button>
       </div>
 
