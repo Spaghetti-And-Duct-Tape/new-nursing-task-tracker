@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { TaskCategory, TaskDefinition, TaskWorkflow } from "../../types/task";
+import type { TimeString } from "../../types/time";
 
 interface AddDefinitionFormProps {
   patientId: string;
@@ -9,7 +10,7 @@ interface AddDefinitionFormProps {
     persistent: boolean
   ) => void;
   setActiveForm: React.Dispatch<
-    React.SetStateAction<"definition" | "instance" | null>
+    React.SetStateAction<"module" | "definition" | "instance" | null>
   >;
 };
 
@@ -17,11 +18,10 @@ interface TaskDefinitionForm {
   name: string;
   category: TaskCategory
   workflow: TaskWorkflow;
-  type: "frequency" | "timed";
-  times: string[];
-  hours: number;
-  anchorTime: string;
-  persistent: boolean;
+  offset: number,
+  interval: number,
+  repeat: number,
+  persistent: boolean
 };
 
 export function AddDefinitionForm({
@@ -33,12 +33,13 @@ export function AddDefinitionForm({
     name: "",
     category: "medication",
     workflow: "chart",
-    type: "frequency",
-    times: [],
-    hours: 4,
-    anchorTime: "00:00",
+    offset: 0,
+    interval: 0,
+    repeat: 1,
     persistent: true
   });
+
+  const [timesInput, setTimesInput] = useState("");
 
   function handleChange(
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -52,39 +53,44 @@ export function AddDefinitionForm({
     }));
   };
 
-  function handleTimes(
-    e: React.ChangeEvent<HTMLInputElement>
-  ) {
-    setDefinition(prev => {
-      const times = e.target.value
-        .split(",")
-        .map(time => time.trim());
+  function toTimeString(
+    value: string
+  ): TimeString | "now" | null {
+    const time = value.trim().toLowerCase();
 
-        return {
-          ...prev,
-          times
-        }
-    });
+    if (time === "now") return "now";
+
+    const match = time.match(
+      /^(\d{1,2}):(\d{1,2})$|^(\d{1,2})(\d{2})?$/
+    );
+
+    if (!match) return null;
+
+    const hours = Number(match[1] ?? match[3]);
+    const minutes = Number(match[2] ?? match[4] ?? 0);
+
+    if (
+      hours > 23
+      || minutes > 59
+    ) return null;
+
+    return `${
+      String(hours).padStart(2, "0")
+    }:${
+      String(minutes).padStart(2, "0")
+    }` as TimeString;
   };
 
   function handleSubmit(
     e: React.SubmitEvent<HTMLFormElement>
   ) {
-    e.preventDefault()
+    e.preventDefault();
 
     if (!definition.name.trim()) return;
 
-    const schedule = 
-      definition.type === "frequency"
-        ? {
-          type: "frequency" as const,
-          hours: definition.hours,
-          anchorTime: definition.anchorTime
-        }
-        : {
-          type: "timed" as const,
-          times: definition.times
-        };
+    const times = timesInput
+      .split(",")
+      .map(toTimeString);
 
     const task: TaskDefinition = {
       id: crypto.randomUUID(),
@@ -93,9 +99,16 @@ export function AddDefinitionForm({
       category: definition.category,
       workflow: definition.workflow,
 
-      schedule
+      schedule: {
+        times: times.filter(
+          (time): time is TimeString | "now" => time !== null
+        ),
+        offset: definition.offset,
+        interval: definition.interval,
+        repeat: definition.repeat,
+      }
     };
-    
+
     onAddDefinition(
       patientId,
       task,
@@ -133,10 +146,9 @@ export function AddDefinitionForm({
           gap: "10px",
           flexShrink: 0
         }}
-      >
-        <button
+      ><button
           style={{
-            width: "50%"
+            width: "33%"
           }}
           onClick={() => 
             setActiveForm("instance")
@@ -147,7 +159,7 @@ export function AddDefinitionForm({
         </button>
         <button
           style={{
-            width: "50%"
+            width: "33%"
           }}
           onClick={() => 
             setActiveForm("definition")
@@ -155,6 +167,17 @@ export function AddDefinitionForm({
           type="button"
         >
           Routine
+        </button>
+        <button
+          style={{
+            width: "33%"
+          }}
+          onClick={() => 
+            setActiveForm("module")
+          }
+          type="button"
+        >
+          Module
         </button>
       </div>
 
@@ -167,49 +190,29 @@ export function AddDefinitionForm({
         onChange={handleChange}
       />
 
-      <select
-        name="type"
-        value={definition.type}
-        onChange={handleChange}
-      >
-        <option 
-          value="frequency"
-        >
-          Frequency
-        </option>
-        <option 
-          value="timed"
-        >
-          Timed
-        </option>
-      </select>
+      <input
+        name="times"
+        placeholder="Times"
+        value={timesInput}
+        onChange={(e) => 
+          setTimesInput(e.target.value)
+        }
+      />
 
-      {definition.type === "timed" && (
-        <input
-          placeholder="Times"
-          value={definition.times.join(", ")}
-          onChange={handleTimes}
-        />
-      )}
+      <input
+        name="interval"
+        placeholder="Interval"
+        value={definition.interval}
+        onChange={handleChange} 
+      />
 
-      {definition.type === "frequency" && (
-        <>
-          <input
-            name="hours"
-            placeholder="Frequency"
-            value={definition.hours}
-            onChange={handleChange}
-          />
-
-          <input
-            type="time"
-            name="anchorTime"
-            placeholder="Frequency"
-            value={definition.anchorTime}
-            onChange={handleChange}
-          />
-        </>
-      )}
+      
+      <input
+        name="repeat"
+        placeholder="Repeat"
+        value={definition.repeat}
+        onChange={handleChange} 
+      />
 
       <label>
         <input

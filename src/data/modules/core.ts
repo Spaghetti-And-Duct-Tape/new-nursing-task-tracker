@@ -8,24 +8,28 @@ export const core: CareModule = {
   persistent: true,
 
   tasks: [{
-      id: "temperature",
+      id: "core-temperature",
       name: "Temperature",
       category: "chart",
       workflow: "complete-and-chart",
 
       schedule: {
-        type: "frequency",
-        hours: 4,
+        times: ["08:00", "20:00"],
+        offset: 0,
+        interval: 240,
+        repeat: 3
       }
     }, {
-      id: "output",
+      id: "core-output",
       name: "Output",
       category: "chart",
       workflow: "complete-and-chart",
 
       schedule: {
-        type: "frequency",
-        hours: 1
+        times: ["07:00", "19:00"],
+        offset: 0,
+        interval: 60,
+        repeat: 12
       }
     }]
 };

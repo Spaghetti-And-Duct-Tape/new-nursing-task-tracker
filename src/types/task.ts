@@ -1,3 +1,5 @@
+import type { TimeString } from "./time";
+
 export type TaskCategory = 
   | "chart"
   | "medication"
@@ -13,15 +15,13 @@ export type TaskWorkflow =
   | "complete-and-chart"
   | "chart";
 
-export type TaskSchedule = 
-  | {
-    type: "frequency";
-    hours: number;
-    anchorTime?: string;
-  } | {
-    type: "timed";
-    times: string[];
-  };
+
+export interface TaskSchedule {
+  times: (TimeString | "now" | "hour")[];
+  offset: number;
+  interval: number;
+  repeat: number;
+}
 
 export interface TaskDefinition {
   id: string;
