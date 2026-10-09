@@ -8,6 +8,8 @@ import { getHour } from "../../utils/utils";
 import { AddDefinitionForm } from "../task/addDefinitionForm";
 import { AddModuleForm } from "../task/addModuleForm";
 import type { CareModule } from "../../types/careModule";
+import PatientModules from "./patientModules";
+import { careModuleLibrary } from "../../data/careModuleLibrary";
 
 interface PatientViewProps {
   patient: Patient;
@@ -26,6 +28,10 @@ interface PatientViewProps {
     patientId: string,
     module: CareModule
   ) => void;
+  onRemoveModule: (
+    patientId: string,
+    patientModuleId: string
+  ) => void;
 }
 
 export function PatientView({
@@ -34,7 +40,8 @@ export function PatientView({
   onAddTask,
   onAddDefinition,
   onNoteChange,
-  onAddModule
+  onAddModule,
+  onRemoveModule
 }: PatientViewProps) {
   const [activeTaskId, setActiveTaskId] = useState<
     string | null
@@ -42,7 +49,10 @@ export function PatientView({
 
   const [activeForm, setActiveForm] = useState<
   "module" | "definition" | "instance" | null
-  >(null)
+  >(null);
+
+  const [showModules, setShowModules] = useState(false);
+
 
   function handleTaskClick(task: TaskInstance) {
     onTaskClick(task);
@@ -64,6 +74,22 @@ export function PatientView({
       }}
     >
       <h2>Room {patient.room}</h2>
+
+      <button
+        type="button"
+        onClick={() => 
+          setShowModules(prev => !prev)
+        }
+      >
+        {">"}
+      </button>
+      {showModules && (
+        <PatientModules
+          patient={patient}
+          careModules={careModuleLibrary}
+          onRemoveModule={onRemoveModule}
+        />
+      )}
 
       {activeForm === null && (
         <button
@@ -104,6 +130,8 @@ export function PatientView({
           key={hour.getTime()}
         >
           <h3>
+            {hour.toDateString()}
+            {" - "}
             {hour.toLocaleTimeString([], {
               hour: "numeric"
             })}

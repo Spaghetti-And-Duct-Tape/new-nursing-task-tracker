@@ -1,6 +1,6 @@
 import type { CareModule } from "../../types/careModule";
 
-export const taysCore: CareModule = {
+const taysCore: CareModule = {
   id: "taysCore",
   name: "Tay Tay's Core",
   description: "Core recurring tasks for Tay Tay's Patients.",
@@ -81,3 +81,5 @@ export const taysCore: CareModule = {
       }
     },]
 };
+
+export default taysCore;
