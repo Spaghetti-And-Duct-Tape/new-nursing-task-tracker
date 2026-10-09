@@ -13,6 +13,7 @@ import { generateTasks } from "./utils/scheduling/generateTasks";
 import { generatePatientTasks } from "./utils/patient/generatePatientTasks";
 import type { CareModule } from "./types/careModule";
 import { careModuleLibrary } from "./data/careModuleLibrary";
+import type { Shift } from "./types/shift";
 
 const date = new Date();
 
@@ -317,9 +318,31 @@ function App() {
     }));
   };
 
+  function testNextShift() {
+    setAssignment(prev => {
+      const nextShift: Shift = 
+        prev.shift.name === "Day" ? defaultNightShift : defaultDayShift;
+
+        const nextDate = new Date(prev.shiftEnd);
+
+        return createAssignment({
+          patients: prev.patients,
+          shift: nextShift,
+          date: nextDate,
+          modules: careModuleLibrary
+        });
+    });
+  };
+
   return (
     <main>
       <h2>Nursing Task Tracker</h2>
+
+      <button
+        onClick={testNextShift}
+      >
+        Test Next Shift
+      </button>
 
       <AddPatientForm
         onAddPatient={handleAddPatient}
