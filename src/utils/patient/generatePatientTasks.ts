@@ -25,8 +25,12 @@ export function generatePatientTasks({
     if (!patientModule.persistent) return [];
 
     const module = modules.find(
-      careModule => careModule.id === patientModule.moduleId
+      careModule => {
+        return careModule.id === patientModule.moduleId
+      }
     );
+
+
 
     if (!module) return [];
 

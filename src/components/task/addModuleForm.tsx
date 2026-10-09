@@ -1,9 +1,7 @@
 import { useState } from "react"
 import type { CareModule } from "../../types/careModule";
-import { core } from "../../data/modules/core";
-import { bloodTransfusion } from "../../data/modules/bloodTransfusion";
-import { taysCore } from "../../data/modules/taysCore";
 import type { Patient } from "../../types/patient";
+import { careModuleLibrary } from "../../data/careModuleLibrary";
 
 interface AddModuleFormProps {
   patient: Patient
@@ -16,12 +14,6 @@ interface AddModuleFormProps {
   >
 }
 
-const careModules: CareModule[] = [
-  core,
-  bloodTransfusion,
-  taysCore
-];
-
 export function AddModuleForm({
   patient,
   onAddModule,
@@ -30,7 +22,7 @@ export function AddModuleForm({
   const [search, setSearch] = useState("");
   const [modules, setModules] = useState<CareModule[]>([]);
 
-  const filteredModules = careModules.filter(module => 
+  const filteredModules = careModuleLibrary.filter(module => 
     module.name.toLowerCase().includes(
       search.trim().toLowerCase()
     ) &&

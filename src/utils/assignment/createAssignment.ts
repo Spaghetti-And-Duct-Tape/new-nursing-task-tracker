@@ -23,7 +23,7 @@ export function createAssignment({
     start: shiftStart,
     end: shiftEnd
   } = getShiftRange(date, shift);
-
+  
   const assignedPatients = patients.map(patient => ({
     ...patient, 
 

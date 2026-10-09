@@ -1,6 +1,6 @@
 import type { CareModule } from "../../types/careModule";
 
-export const bloodTransfusion: CareModule = {
+const bloodTransfusion: CareModule = {
   id: "blood-transfuion",
   name: "Blood Transfusion",
   description: "Core recurring tasks for a patient receiving a blood transfusion.",
@@ -33,3 +33,5 @@ export const bloodTransfusion: CareModule = {
       }
     }]
 };
+
+export default bloodTransfusion;

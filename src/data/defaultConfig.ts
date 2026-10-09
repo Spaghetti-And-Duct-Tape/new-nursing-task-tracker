@@ -1,5 +1,5 @@
 import type { NursingConfig } from "../types/config";
-import { core } from "./modules/core";
+import core from "./modules/core";
 import { defaultDayShift, defaultNightShift } from "./shift";
 
 export const defaultConfig: NursingConfig = {
@@ -14,6 +14,6 @@ export const defaultConfig: NursingConfig = {
   ],
 
   modules: [
-    core,
+    core
   ]
 };

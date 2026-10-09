@@ -20,6 +20,10 @@ interface AssignmentViewProps {
     patientId: string,
     module: CareModule
   ) => void;
+  onRemoveModule: (
+    patientId: string,
+    patientModuleId: string
+  ) => void;
 };
 
 export function AssignmentView({
@@ -28,7 +32,8 @@ export function AssignmentView({
   onAddTask,
   onAddDefinition,
   onNoteChange,
-  onAddModule
+  onAddModule,
+  onRemoveModule
 }: AssignmentViewProps) {
   return (
     <main>
@@ -41,6 +46,7 @@ export function AssignmentView({
           onAddDefinition={onAddDefinition}
           onNoteChange={onNoteChange}
           onAddModule={onAddModule}
+          onRemoveModule={onRemoveModule}
         />
       ))}
     </main>
