@@ -23,12 +23,12 @@ export function createAssignment({
     start: shiftStart,
     end: shiftEnd
   } = getShiftRange(date, shift);
-
-  console.log({shiftStart, shiftEnd})
   
   const assignedPatients = patients.map(patient => ({
     ...patient, 
 
+    //Generates all task instances of a patient based 
+    //on care modules and task definitions attached to the patient
     taskInstances: generatePatientTasks({
       patient,
       modules,

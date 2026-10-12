@@ -5,6 +5,8 @@ const bloodTransfusion: CareModule = {
   name: "Blood Transfusion",
   description: "Core recurring tasks for a patient receiving a blood transfusion.",
 
+  source: "system",
+
   persistent: false,
 
   tasks: [{

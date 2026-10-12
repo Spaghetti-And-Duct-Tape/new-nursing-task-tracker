@@ -4,6 +4,9 @@ const postOpVitals: CareModule = {
   id: "post-op-vitals",
   name: "Post-Op Vitals",
   description: "Post-operative vital sign monitoring",
+
+  source: "system",
+  
   persistent: false,
 
   tasks: [

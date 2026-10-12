@@ -4,6 +4,9 @@ const crrt: CareModule = {
   id: "crrt",
   name: "CRRT",
   description: "Tasks for patients on CRRT.",
+
+  source: "system",
+
   persistent: true,
 
   tasks: [

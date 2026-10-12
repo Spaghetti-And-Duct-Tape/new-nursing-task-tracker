@@ -5,6 +5,8 @@ const core: CareModule = {
   name: "Core",
   description: "Core recurring tasks for a patient.",
 
+  source: "system",
+
   persistent: true,
 
   tasks: [{
