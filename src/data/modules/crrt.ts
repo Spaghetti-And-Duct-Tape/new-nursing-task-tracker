@@ -3,13 +3,14 @@ import type { CareModule } from "../../types/careModule";
 const crrt: CareModule = {
   id: "crrt",
   name: "CRRT",
-  description: "Tasks for patients on CRRT.",
+  description: "Routine CRRT care and monitoring tasks.",
+
+  source: "system",
   persistent: true,
 
-  tasks: [
-    {
+  tasks: [{
       id: "crrt-labs",
-      name: "CRRT Labs",
+      name: "Labs - CRRT",
       category: "chart",
       workflow: "complete",
 
@@ -19,8 +20,7 @@ const crrt: CareModule = {
         interval: 360,
         repeat: 2
       }
-    }
-  ]
+    }]
 };
 
 export default crrt;

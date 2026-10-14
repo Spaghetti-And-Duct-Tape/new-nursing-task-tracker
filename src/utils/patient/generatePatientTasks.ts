@@ -3,6 +3,7 @@ import type { Patient } from "../../types/patient";
 import type { TaskInstance } from "../../types/task";
 import { generateModuleTasks } from "../scheduling/generateModuleTasks";
 import { generateTasks } from "../scheduling/generateTasks";
+import { sortByTime } from "../utils";
 
 interface GeneratePatientTasksParams {
   patient: Patient;
@@ -19,18 +20,11 @@ export function generatePatientTasks({
 }: GeneratePatientTasksParams): TaskInstance[] {
 
   //Looks up all module IDs patient has and generates tasks 
-  //based from them 
-  
+  //on them
   const moduleTasks = patient.modules.flatMap(patientModule => {
-    if (!patientModule.persistent) return [];
-
     const module = modules.find(
-      careModule => {
-        return careModule.id === patientModule.moduleId
-      }
+      careModule => careModule.id === patientModule.moduleId
     );
-
-
 
     if (!module) return [];
 
@@ -45,7 +39,7 @@ export function generatePatientTasks({
     });
   });
 
-  //Generates patient tasks that are meant to persist
+  //Generates non-module patient definitions
   const patientTasks = patient.taskDefinitions.flatMap(task => 
     generateTasks({
       task,
@@ -56,12 +50,8 @@ export function generatePatientTasks({
     })
   );
 
-  return [
+  return sortByTime([
     ...moduleTasks,
     ...patientTasks
-  ].sort(
-    (a, b) => 
-      a.scheduledAt.getTime() - 
-      b.scheduledAt.getTime()
-  );
+  ]);
 };

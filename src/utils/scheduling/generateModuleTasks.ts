@@ -15,7 +15,6 @@ export function generateModuleTasks({
   module, 
   patientId,
   patientModuleId,
-  source,
   shiftStart,
   shiftEnd
 }: GenerateModuleTasksParams): TaskInstance[] {
@@ -24,10 +23,10 @@ export function generateModuleTasks({
       generateTasks({
         task,
         patientId,
-        source,
+        moduleId: patientModuleId,
+        source: module.source,
         shiftStart,
         shiftEnd,
-        moduleId: patientModuleId,
       })
     );
 };

@@ -1,0 +1,139 @@
+.categories {
+  display: grid;
+  grid-template-columns: var(
+    --category-columns, repeat(3, minmax(0, 1fr))
+  );
+  gap: 0.5rem;
+}
+
+.categoryButton {
+  position: relative;
+  padding-bottom: 0.65rem;
+  display: flex;
+  flex-direction: var(--category-direction, column);
+  align-items: center;
+  gap: 0.25rem;
+
+  min-width: 0;
+  padding: 0.25rem 0;
+
+  background: transparent;
+  border: 0;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.categoryButton::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+
+  width: 1.5rem;
+  height: 0.2rem;
+  border-radius: 999px;
+
+  background: transparent;
+  transition: background 150ms ease;
+}
+
+.categoryButton.active::after {
+  background: currentColor;
+}
+
+.categoryButton.active .categoryLabel {
+  color: var(--text-primary);
+  font-weight: var(--weight-semibold);
+}
+
+.categoryButton:has(.allTasks) {
+  --selection-color: var(--blue-tasks);
+}
+
+.categoryButton:has(.medications) {
+  --selection-color: var(--green-tasks);
+}
+
+.categoryButton:has(.personal) {
+  --selection-color: var(--red-tasks);
+}
+
+.categoryButton.active::after {
+  background: var(--selection-color);
+}
+
+.categoryCircle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 2.55rem;
+  height: 2.55rem;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+
+  color: var(--text-secondary);
+  background: transparent;
+
+  opacity: 0.65;
+
+  transition:
+    opacity 150ms ease,
+    filter 150ms ease,
+    transform 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.categoryButton:hover .categoryCircle {
+  transform: translateY(-2px);
+}
+
+.categoryButton:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 4px;
+  border-radius: 0.5rem;
+}
+
+.categoryButton.active .categoryCircle {
+  opacity: 1;
+}
+
+.categoryButton.active .categoryLabel {
+  color: var(--text-primary);
+  font-weight: var(--weight-semibold);
+}
+
+.categoryButton:not(.active):hover .categoryCircle {
+  opacity: 0.85;
+  filter: brightness(1);
+}
+
+.allTasks {
+  color: var(--blue-tasks);
+  background: rgba(56, 107, 255, 0.14);
+  box-shadow: 0 0 12px rgba(56, 107, 255, 0.2);
+}
+
+.medications {
+  color: var(--green-tasks);
+  background: rgba(251, 113, 133, 0.12);
+  box-shadow: 0 0 12px rgba(251, 113, 133, 0.15);
+}
+
+.personal {
+  color: var(--red-tasks);
+  background: rgba(52, 211, 153, 0.12);
+  box-shadow: 0 0 12px rgba(52, 211, 153, 0.15);
+}
+
+.categoryCount {
+  font-size: var(--font-md);
+  font-weight: var(--weight-semibold);
+}
+
+.active .categoryLabel {
+  color: var(--text-secondary);
+  font-size: var(--font-xs);
+  text-align: center;
+}

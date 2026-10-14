@@ -1,4 +1,3 @@
-import type { CareModule } from "./careModule";
 import type { Shift } from "./shift";
 
 export interface NursingConfig {
@@ -9,5 +8,7 @@ export interface NursingConfig {
   description?: string;
 
   shifts: Shift[];
-  modules: CareModule[];
+  defaultShift: string;
+
+  modules: string[];
 }

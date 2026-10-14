@@ -6,6 +6,21 @@ export function advanceTaskStatus(
 
   const now = new Date();
 
+  // Reset if the task has reached its final stage
+  if (
+    (task.workflow === "complete" && task.completed) ||
+    (task.workflow === "chart" && task.charted) ||
+    (task.workflow === "complete-and-chart" && task.completed && task.charted)
+  ) {
+    return {
+      ...task,
+      completed: false,
+      completedAt: undefined,
+      charted: false,
+      chartedAt: undefined
+    };
+  }
+
   switch (task.workflow) {
     case "complete":
       return {
@@ -17,8 +32,6 @@ export function advanceTaskStatus(
     case "chart":
       return {
         ...task,
-        completed: true,
-        completedAt: now,
         charted: true,
         chartedAt: now
       };
@@ -30,12 +43,12 @@ export function advanceTaskStatus(
           completed: true,
           completedAt: now
         };
-      };
+      }
 
       return {
         ...task,
         charted: true,
         chartedAt: now
       };
-  };
-};
+  }
+}

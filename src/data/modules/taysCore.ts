@@ -5,6 +5,8 @@ const taysCore: CareModule = {
   name: "Tay Tay's Core",
   description: "Core recurring tasks for Tay Tay's Patients.",
 
+  source: "system",
+
   persistent: true,
 
   tasks: [{

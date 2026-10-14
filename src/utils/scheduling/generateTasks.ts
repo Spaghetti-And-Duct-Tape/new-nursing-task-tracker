@@ -1,4 +1,3 @@
-import { testDate } from "../../App";
 import type { TaskDefinition, TaskInstance, TaskSource } from "../../types/task";
 import { addOffsetMin, getScheduledAt } from "../utils";
 
@@ -28,7 +27,7 @@ function generationStart(
   const graceStart = new Date(currentTime);
 
   graceStart.setHours(
-    graceStart.getHours() - 24,
+    graceStart.getHours() - 1,
     0,
     0,
     0
@@ -109,117 +108,5 @@ export function generateTasks(
     };
   });
 
-  return instances
-};
-
-/*export function generateTimedTasks({
-  task,
-  patientId,
-  source,
-  shiftStart,
-  shiftEnd,
-  moduleId
-}: GenerateTasksParams): TaskInstance[] {
-
-  if (task.schedule.type !== "timed") return [];
-
-  const instances: TaskInstance[] = [];
-
-  task.schedule.times.forEach(time => {
-    const [hours, minutes] = time.split(":").map(Number);
-
-    const scheduledAt = new Date(shiftStart);
-
-    scheduledAt.setHours(
-      hours,
-      minutes,
-      0,
-      0
-    );
-
-    if (scheduledAt < generationStart(shiftStart)) scheduledAt.setDate(
-      scheduledAt.getDate() + 1
-    );
-
-    if (scheduledAt > shiftEnd) return
-
-    instances.push(getInstance({
-      task,
-      patientId,
-      source,
-      scheduledAt,
-      moduleId
-    }));
-  });
-
   return instances;
 };
-
-function getFrequencyStart(
-  shiftStart: Date,
-  frequency: number,
-  anchorHour?: string
-): Date {
-  const [hours, minutes] = 
-    (anchorHour ?? "00:00")
-      .split(":")
-      .map(Number);
-
-  const anchor = new Date(shiftStart);
-
-  anchor.setHours(
-    hours, 
-    minutes,
-    0,
-    0,
-  );
-
-  const frequencyMs = 
-    frequencyInMilliseconds(frequency)
-
-  while (anchor < generationStart(shiftStart)) {
-    anchor.setTime(
-      anchor.getTime() + frequencyMs
-    );
-  };
-
-  return anchor;
-};
-
-export function generateFrequencyTasks({
-  task,
-  patientId,
-  source,
-  shiftStart,
-  shiftEnd,
-  moduleId
-}: GenerateTasksParams): TaskInstance[] {
-
-  //Only works on tasks with frequency
-  if (task.schedule.type !== "frequency") return [];
-
-  const instances: TaskInstance[] = [];
-
-  const currentTime = getFrequencyStart(
-    shiftStart,
-    task.schedule.hours,
-    task.schedule.anchorTime
-  );
-
-  while (currentTime <= shiftEnd) {    
-    instances.push(getInstance({
-      task,
-      patientId,
-      source,
-      moduleId,
-      scheduledAt: new Date(currentTime)
-    }));
-
-    currentTime.setTime(
-      currentTime.getTime() + 
-      frequencyInMilliseconds(task.schedule.hours)
-    );
-  };
-
-  return instances;
-};*/

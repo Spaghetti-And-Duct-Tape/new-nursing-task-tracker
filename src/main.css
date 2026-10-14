@@ -1,0 +1,9 @@
+@import "./styles/variables.css";
+
+body {
+  background-color: var(--bg-primary);
+  font-family: var(--font-primary);
+  color: var(--text-primary);
+  scrollbar-width: thin;
+  scrollbar-color: hsl(0 0% 50%) transparent;
+}

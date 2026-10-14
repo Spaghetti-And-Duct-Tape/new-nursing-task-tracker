@@ -1,0 +1,182 @@
+.taskList {
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+  min-height: 0;
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.taskRow {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  
+  border-bottom: 1px solid var(--border-color);
+}
+
+.taskRow:hover {
+  background: #17243a;
+}
+
+.taskRow:last-child {
+  border-bottom: none;
+}
+
+.buttonStatus {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  gap: 0.75rem;
+
+  padding: 0.625rem;
+  border: none;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.taskStatus {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.taskStatus svg {
+  width: 100%;
+  height: 100%;
+  stroke-width: 2;
+}
+
+/* Pending */
+.pending {
+  color: var(--blue-tasks);
+}
+
+/* Completed but not yet charted */
+.inProgress {
+  color: #fbbf24;
+}
+
+/* Fully finished */
+.complete {
+  color: var(--green-tasks);
+}
+
+/* Overdue and unfinished */
+.taskStatus.overdue {
+  color: var(--red-tasks);
+}
+
+.taskDetails {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  gap: 0.125rem;
+}
+
+.taskNameRow {
+  display: flex;
+  align-items: bottom;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.5rem;
+}
+
+.taskName {
+  color: var(--text-primary);
+  font-size: var(--font-sm);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.timeStamp {
+  font-size: 0.6rem;
+  white-space: nowrap;
+  color: var(--green-tasks);
+}
+
+.noteIndicator {
+  flex-shrink: 0;
+  color: var(--text-secondary);
+  opacity: 0.75;
+}
+
+.taskMeta {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.taskTime {
+  flex-shrink: 0;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--font-xs);
+}
+
+.taskSeparator {
+  flex-shrink: 0;
+  color: var(--text-secondary);
+}
+
+.taskNote {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
+  color: var(--text-secondary);
+  font-size: var(--font-xs);
+  opacity: 0.8;
+}
+
+.taskAlert {
+  flex-shrink: 0;
+  color: #fb7185;
+}
+
+.emptyTasks {
+  padding: 1.5rem 0.5rem;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: var(--font-sm);
+}
+
+.taskOptions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+
+  border: none;
+  border-radius: 0.375rem;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.taskOptions:hover {
+  background: #2a3b56;
+}
+
+.buttonStatus:focus-visible,
+.taskOptions:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
