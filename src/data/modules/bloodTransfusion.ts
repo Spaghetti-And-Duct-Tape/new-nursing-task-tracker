@@ -1,17 +1,16 @@
 import type { CareModule } from "../../types/careModule";
 
 const bloodTransfusion: CareModule = {
-  id: "blood-transfuion",
+  id: "blood-transfusion",
   name: "Blood Transfusion",
-  description: "Core recurring tasks for a patient receiving a blood transfusion.",
+  description: "Vital sign monitoring during a blood transfusion.",
 
   source: "system",
-
   persistent: false,
 
   tasks: [{
-      id: "blood-transfusion-temperature",
-      name: "Blood Transfusion - Temperature and vitals",
+      id: "blood-transfusion-initial-vitals",
+      name: "Transfusion Vitals - Initial",
       category: "chart",
       workflow: "complete-and-chart",
 
@@ -22,8 +21,8 @@ const bloodTransfusion: CareModule = {
         repeat: 2
       }
     }, {
-      id: "blood-transfusion-temperature",
-      name: "Blood Transfusion - Temperature and vitals",
+      id: "blood-transfusion-hourly-vitals",
+      name: "Transfusion Vitals - Hourly",
       category: "chart",
       workflow: "complete-and-chart",
 

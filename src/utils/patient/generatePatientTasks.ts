@@ -22,9 +22,6 @@ export function generatePatientTasks({
   //Looks up all module IDs patient has and generates tasks 
   //on them
   const moduleTasks = patient.modules.flatMap(patientModule => {
-    //Prevents non persistant modules from creating tasks 
-    if (!patientModule.persistent) return [];
-
     const module = modules.find(
       careModule => careModule.id === patientModule.moduleId
     );

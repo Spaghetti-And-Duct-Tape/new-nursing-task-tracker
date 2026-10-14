@@ -35,7 +35,7 @@
   font-weight: var(--weight-semibold);
 }
 
-.shiftHours {
+.currentDate {
   font-variant-numeric: tabular-nums;
 }
 
@@ -43,7 +43,7 @@
   color: #61738d;
 }
 
-.shiftDate {
+.shiftHours {
   display: inline-flex;
   align-items: center;
   grid-area: 0.5rem;
@@ -66,7 +66,7 @@
 }
 
 @media (max-width: 80rem) {
-  .shiftDate {
+  .shiftHours {
     display: none;
   }
 }

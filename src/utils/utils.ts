@@ -1,14 +1,23 @@
 import type { TaskInstance } from "../types/task";
 import type { TimeString } from "../types/time";
 
+export const minuteMs = 60_000;
+
+export function toMilitaryTimeFormat(date: Date) {
+  return date.toLocaleTimeString([], {
+    hour12: false,
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+};
+
 export function addOffsetMin(
-  time: Date,
+  date: Date,
   offset: number
 ): Date {
-  const minuteMS = 60_000;
 
   return new Date(
-    time.getTime() + offset * minuteMS
+    date.getTime() + offset * minuteMs
   );
 };
 

@@ -4,12 +4,13 @@ import {
   ChartNoAxesColumn,
   Settings
 } from "lucide-react";
-import styles from "./sidebar.module.css";
-import type { NavProps } from "../bottomNav/bottomNav";
+import styles from "./navigation.module.css";
+import type { NavProps } from "./navProps";
 
 export default function Sidebar({
   activeView,
-  onNavigate
+  onNavigate,
+  onAddPatient
 }: NavProps) {
   return (
     <aside
@@ -29,6 +30,7 @@ export default function Sidebar({
 
         <button
           className={styles.navItem}
+          onClick={onAddPatient}
         >
           <UserRoundPlus />
           <span>Add Patient</span>

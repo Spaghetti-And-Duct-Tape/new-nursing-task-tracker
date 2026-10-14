@@ -1,3 +1,5 @@
+import { useCurrentDate } from "../../../hooks/DateProvider";
+import { toMilitaryTimeFormat } from "../../../utils/utils";
 import styles from "./header.module.css";
 
 interface HeaderProps {
@@ -11,20 +13,18 @@ export default function Header({
   start,
   end
 }: HeaderProps) {
-  const timeOptions: Intl.DateTimeFormatOptions = {
-    hour12: false,
-    hour: "2-digit",
-    minute: "2-digit"
-  };
+  const now = useCurrentDate();
 
-  const startTime = start.toLocaleTimeString([], timeOptions)
-  const endTime = end.toLocaleTimeString([], timeOptions);
+  const startTime = toMilitaryTimeFormat(start)
+  const endTime = toMilitaryTimeFormat(end);
 
-  const date = start.toLocaleDateString([], {
+  const currentDate = now.toLocaleDateString([], {
     weekday: "short",
     month: "short",
     day: "2-digit"
   });
+
+  const currentTime = toMilitaryTimeFormat(now);
 
   return (
     <header className={styles.header}>
@@ -36,18 +36,17 @@ export default function Header({
         <span className={styles.shiftName}>
           {name}
         </span>
-        <span className={styles.separator}>
-          •
-        </span>
         <span className={styles.shiftHours}>
-          {startTime} - {endTime}
-        </span>
-
-        <span className={styles.shiftDate}>
           <span className={styles.separator}>
             •
           </span>
-          <span>{date}</span>
+          {startTime} - {endTime}
+        </span>
+        <span className={styles.separator}>
+          •
+        </span>
+        <span className={styles.currentDate}>
+          <span>{currentDate} {currentTime}</span>
         </span>
       </p>
     </header>

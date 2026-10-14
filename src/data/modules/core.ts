@@ -3,10 +3,9 @@ import type { CareModule } from "../../types/careModule";
 const core: CareModule = {
   id: "core",
   name: "Core",
-  description: "Core recurring tasks for a patient.",
+  description: "Essential routine patient care and monitoring tasks.",
 
   source: "system",
-
   persistent: true,
 
   tasks: [{

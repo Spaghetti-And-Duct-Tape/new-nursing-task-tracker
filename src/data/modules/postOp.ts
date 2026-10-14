@@ -3,16 +3,14 @@ import type { CareModule } from "../../types/careModule";
 const postOpVitals: CareModule = {
   id: "post-op-vitals",
   name: "Post-Op Vitals",
-  description: "Post-operative vital sign monitoring",
+  description: "Routine post-operative vital sign monitoring.",
 
   source: "system",
-  
   persistent: false,
 
-  tasks: [
-    {
+  tasks: [{
       id: "post-op-vitals-q15",
-      name: "Post-Op Vitals 15 minutes",
+      name: "Post-Op Vitals Q15",
       category: "chart",
       workflow: "complete-and-chart",
 
@@ -25,7 +23,7 @@ const postOpVitals: CareModule = {
     },
     {
       id: "post-op-vitals-q30",
-      name: "Post-Op Vitals 30 minutes",
+      name: "Post-Op Vitals Q30",
       category: "chart",
       workflow: "complete-and-chart",
 
@@ -38,7 +36,7 @@ const postOpVitals: CareModule = {
     },
     {
       id: "post-op-vitals-q1",
-      name: "Post-Op Vitals hourly",
+      name: "Post-Op Vitals Q1H",
       category: "chart",
       workflow: "complete-and-chart",
 
@@ -48,8 +46,7 @@ const postOpVitals: CareModule = {
         interval: 60,
         repeat: 4
       }
-    }
-  ]
+    }]
 };
 
 export default postOpVitals;

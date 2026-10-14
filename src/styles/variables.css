@@ -10,6 +10,12 @@
 
   --text-primary: #f1f5ff;
   --text-secondary: #91b0e2;
+  --text-highlighted: #60a5fA;
+
+  /* Task colors */
+  --blue-tasks: #4b91ff;
+  --red-tasks: #fb7185;
+  --green-tasks: #34d399;
 
   /* Fonts */
   --font-primary: sans-serif; 
@@ -34,4 +40,8 @@
   /* Line heights */
   --line-tight: 1.2;
   --line-normal: 1.5;
+
+  /* Scrollbar */
+  --scroll-container: 
 }
+

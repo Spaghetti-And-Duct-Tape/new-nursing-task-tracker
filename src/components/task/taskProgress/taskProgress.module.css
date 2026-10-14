@@ -1,0 +1,52 @@
+.progressBar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.progressHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+
+  color: var(--text-primary);
+  font-size: var(--font-xs);
+  font-weight: var(--weight-medium);
+}
+
+.overdue,
+.noOverdue {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+
+  padding: 0.3rem 0.5rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.overdue {
+  color: #fb7185;
+  background: rgba(251, 113, 133, 0.13);
+}
+
+.noOverdue {
+  color: #34d399;
+  background: rgba(52, 211, 153, 0.1);
+}
+
+.progressTrack {
+  height: 0.5rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--bg-elevated);
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent-primary);
+  transition: width 200ms ease;
+}

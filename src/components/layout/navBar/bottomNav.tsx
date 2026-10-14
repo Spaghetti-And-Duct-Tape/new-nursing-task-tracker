@@ -5,17 +5,13 @@ import {
   Settings
 } from "lucide-react";
 
-import styles from "./bottomNav.module.css";
-import type { AppView } from "../../../types/layout";
-
-export interface NavProps {
-  activeView: AppView
-  onNavigate: (AppView: AppView) => void;
-}
+import styles from "./navigation.module.css";
+import type { NavProps } from "./navProps";
 
 export default function BottomNav({
   activeView,
-  onNavigate
+  onNavigate, 
+  onAddPatient
 }: NavProps) {
   return (
     <nav
@@ -35,6 +31,8 @@ export default function BottomNav({
 
       <button
         className={styles.navItem}
+        onClick={onAddPatient}
+
       >
         <UserRoundPlus />
         <span>Add Patient</span>

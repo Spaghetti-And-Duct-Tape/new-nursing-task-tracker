@@ -1,29 +1,74 @@
 import { useState } from "react";
 import type { Assignment } from "../types/assignment";
-import { getNurseConfig } from "../utils/config/config";
-import type { NursingConfig } from "../types/config";
-import { createAssignment } from "../utils/assignment/createAssignment";
+import { createPatient } from "../utils/patient/createPatient";
+import { addPatientToAssignment } from "../utils/assignment/addPatientToAssignment";
 import { getCareModuleLibrary } from "../data/getCareModuleLibrary";
+import { getDefaultConfigs } from "../utils/assignment/createAssignment";
+import { parseAssignment } from "../utils/assignment/parseAssignmnet";
+import type { Patient } from "../types/patient";
 
 export function useAssignment() {
   const [assignment, setAssignment] = useState<Assignment>(() => {
-    const config: NursingConfig = getNurseConfig();
-    const shift = config.shifts.find(shift => 
-      shift.id === config.defaultShift
-    );
+    const saved = localStorage.getItem("nursing-assignment");
 
-    if (!shift) 
-      throw new Error("Default shift not found.");
-
-    return createAssignment({
-      patients: [],
-      shift,
-      date: new Date(),
-      modules: getCareModuleLibrary()
-    });
+    return saved ? 
+      parseAssignment(saved) :
+      getDefaultConfigs();
   });
 
+  function addPatient({
+    room,
+    moduleIds
+  }: {
+    room: string;
+    moduleIds: string[];
+  }) {
+    const patient = createPatient({room, moduleIds});
+
+    const newAssignment = addPatientToAssignment({
+      assignment,
+      patient,
+      modules: getCareModuleLibrary()
+    });
+
+    localStorage.setItem(
+      "nursing-assignment",
+      JSON.stringify(newAssignment)
+    );
+
+    setAssignment(newAssignment);
+  };
+
+  function updatePatient(
+    id: string,
+    updater: (patient: Patient) => Patient | null
+  ) {
+
+    const newAssignment = {
+      ...assignment,
+      patients: assignment.patients.flatMap(patient => {
+        if (patient.id !== id) return [patient];
+
+        const updated = updater(patient);
+
+        return updated ? [updated] : [];
+      })
+    };
+
+    setAndSaveAssignment(newAssignment);
+  };
+
+  function setAndSaveAssignment(assignment: Assignment) {
+    localStorage.setItem(
+      "nursing-assignment",
+      JSON.stringify(assignment)
+    );
+    setAssignment(assignment);
+  };
+
   return {
-    assignment
+    assignment,
+    addPatient,
+    updatePatient
   }
 };

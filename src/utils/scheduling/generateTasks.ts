@@ -27,7 +27,7 @@ function generationStart(
   const graceStart = new Date(currentTime);
 
   graceStart.setHours(
-    graceStart.getHours() - 24,
+    graceStart.getHours() - 1,
     0,
     0,
     0

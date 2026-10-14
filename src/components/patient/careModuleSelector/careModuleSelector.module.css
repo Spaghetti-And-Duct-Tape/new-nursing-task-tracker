@@ -1,0 +1,148 @@
+.moduleSelector,
+.moduleList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.moduleSelector > input {
+  box-sizing: border-box;
+  min-height: 2.75rem;
+
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+
+  background: var(--bg-primary);
+  color: var(--text-primary);
+
+  font: inherit;
+  font-size: var(--font-sm);
+}
+
+.moduleSelector > input::placeholder {
+  color: var(--text-secondary);
+}
+
+.moduleSelector > input:focus-visible {
+  outline: 2px solid var(--accent-primary);
+}
+
+.moduleSelector {
+  margin-top: 1.5rem;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+
+  color: var(--text-primary);
+  font-size: var(--font-sm);
+  font-weight: var(--weight-medium);
+}
+
+.sectionHeader span:last-child {
+  color: var(--text-secondary);
+  font-size: var(--font-xs);
+  font-weight: var(--weight-regular);
+}
+
+/* Scrollable module list */
+
+.moduleList {
+  max-height: 12rem;
+  overflow-y: auto;
+  padding: 0.125rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-color) transparent;
+}
+
+/* =========================
+   Available Modules
+========================= */
+
+.moduleItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.875rem;
+
+  width: 100%;
+  min-height: 3rem;
+  padding: 0.75rem;
+
+  border: 1px solid var(--border-color);
+  border-radius: 0.625rem;
+
+  background: var(--bg-card);
+  color: var(--text-primary);
+
+  font: inherit;
+  font-size: var(--font-sm);
+  text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease;
+}
+
+.moduleItem svg {
+  width: 1.125rem;
+  height: 1.125rem;
+  flex-shrink: 0;
+
+  color: var(--accent-primary);
+  stroke-width: 2;
+}
+
+.moduleItem:hover {
+  background: var(--bg-elevated);
+  border-color: var(--accent-primary);
+}
+
+/* =========================
+   Selected Modules
+========================= */
+
+.selectedModule {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.875rem;
+
+  min-height: 3rem;
+  padding: 0.5rem 0.75rem;
+
+  border: 1px solid var(--accent-primary);
+  border-radius: 0.625rem;
+
+  background: rgb(56 107 255 / 8%);
+  color: var(--text-primary);
+
+  font-size: var(--font-sm);
+  cursor: pointer;
+
+  transition:
+    background-color 150ms ease,
+    color 150ms ease;
+}
+
+.selectedModule:hover {
+  background: rgb(56 107 255 / 16%);
+}
+
+.selectedModule svg {
+  flex-shrink: 0;
+  width: 1.125rem;
+  height: 1.125rem;
+  stroke-width: 2;
+  color: var(--text-secondary);
+}
+
+.selectedModule:hover svg {
+  color: var(--text-primary);
+}
