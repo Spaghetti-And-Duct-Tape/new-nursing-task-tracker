@@ -9,7 +9,7 @@ import BottomNav from "../navBar/bottomNav";
 import Dashboard from "../../views/dashboard";
 import type { Patient } from "../../../types/patient";
 
-interface AppLayoutProps {
+interface Props {
   assignment: Assignment;
   onAddPatient: (patient: {
     room: string,
@@ -25,7 +25,8 @@ export default function AppLayout({
   assignment,
   onAddPatient,
   updatePatient
-}: AppLayoutProps) {
+}: Props) {
+  
   const [activeView, setActiveView] = useState<AppView>("dashboard");
   const [isPatientFormOpen, setIsPatientFormOpen] = useState(false);
 

@@ -9,6 +9,8 @@ import TaskCategories from "../../task/taskCategories/taskCategories";
 import { useState } from "react";
 import TaskItems from "../../task/taskItems/taskItems";
 import type { TaskCategory, TaskInstance } from "../../../types/task";
+import AddTaskModal from "../../modals/taskModals/addTaskModal";
+import { sortByTime } from "../../../utils/utils";
 
 interface PatientCardProps {
   patient: Patient;
@@ -22,6 +24,8 @@ export default function PatientCard({
   patient,
   updatePatient
 }: PatientCardProps) {
+  const [isTaskFormOpen, setIsTaskFormOpen] = useState(false);
+
   const now = useCurrentDate();
   const tasks = patient.taskInstances
   const organizedTasks = organizeTasks(now, tasks);
@@ -42,16 +46,23 @@ export default function PatientCard({
       timedTasks :
       filterTaskCategories(timedTasks, activeCategory);
 
+  const sortedTasks = [...categorizedTasks].sort((a, b) => {
+    return Number(isTaskFinished(a)) - Number(isTaskFinished(b));
+  });
+
   const unfinishedTasks = timedTasks.filter(
     task => !isTaskFinished(task)
   );
 
   function updateTasks(
-    updater: (tasks: TaskInstance[]) => TaskInstance[]
+    update: TaskInstance | ((tasks: TaskInstance[]) => TaskInstance[])
   ) {
     updatePatient(patient.id, currentPatient => ({
       ...currentPatient,
-      taskInstances: updater(currentPatient.taskInstances)
+      taskInstances:
+        typeof update === "function" 
+          ? update(currentPatient.taskInstances)
+          : sortByTime([...currentPatient.taskInstances, update])
     }));
   };
 
@@ -112,6 +123,7 @@ export default function PatientCard({
               type="button"
               className={styles.addTaskButton}
               aria-label="Add task"
+              onClick={() => setIsTaskFormOpen(true)}
             >
               <Plus size={18} /> Add
             </button>
@@ -142,11 +154,18 @@ export default function PatientCard({
           </div>
 
           <TaskItems
-            tasks={categorizedTasks}
+            tasks={sortedTasks}
             updateTasks={updateTasks}
           />
         </section>
       </div>
+
+      <AddTaskModal
+        patient={patient}
+        open={isTaskFormOpen}
+        onOpenChange={setIsTaskFormOpen}
+        onAddTask={updateTasks}
+      />
     </article>
   )
 };

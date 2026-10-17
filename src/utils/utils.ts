@@ -68,3 +68,11 @@ export function sortByTime(
       b.scheduledAt.getTime()
   );
 };
+
+export function getCurrentDateTimeLocal(): string {
+  const now = new Date();
+
+  return new Date (
+    now.getTime() - now.getTimezoneOffset() * minuteMs
+  ).toISOString().slice(0, 16);
+};
