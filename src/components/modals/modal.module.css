@@ -75,7 +75,7 @@
 .field {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  padding: 0.5rem;
 }
 
 .field label {
@@ -84,7 +84,9 @@
   font-weight: var(--weight-medium);
 }
 
-.field input {
+.field input,
+.field textarea,
+.field select {
   box-sizing: border-box;
   min-height: 2.75rem;
 
@@ -98,12 +100,23 @@
   font-size: var(--font-sm);
 }
 
-.field input::placeholder {
+.field input::placeholder,
+.field textarea::placeholder,
+.field select::placeholder {
   color: var(--text-secondary);
 }
 
-.field input:focus-visible {
+.field input:focus-visible,
+.field textarea:focus-visible,
+.field select::placeholder {
   outline: 2px solid var(--accent-primary);
+}
+
+.fieldHint {
+  margin: 0;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: var(--text-secondary);
 }
 
 /* =========================

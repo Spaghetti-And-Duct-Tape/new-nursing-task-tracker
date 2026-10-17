@@ -2,7 +2,7 @@ import { useCurrentDate } from "../../../hooks/DateProvider";
 import { toMilitaryTimeFormat } from "../../../utils/utils";
 import styles from "./header.module.css";
 
-interface HeaderProps {
+interface Props {
   name: string;
   start: Date;
   end: Date;
@@ -12,7 +12,7 @@ export default function Header({
   name,
   start,
   end
-}: HeaderProps) {
+}: Props) {
   const now = useCurrentDate();
 
   const startTime = toMilitaryTimeFormat(start)
