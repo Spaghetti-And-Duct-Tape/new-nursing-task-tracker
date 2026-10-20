@@ -28,12 +28,12 @@
 }
 
 .overdue {
-  color: #fb7185;
+  color: var(--error);
   background: rgba(251, 113, 133, 0.13);
 }
 
 .noOverdue {
-  color: #34d399;
+  color: var(--success);
   background: rgba(52, 211, 153, 0.1);
 }
 
@@ -48,5 +48,11 @@
   height: 100%;
   border-radius: inherit;
   background: var(--accent-primary);
-  transition: width 200ms ease;
+  transition: 
+    width 200ms ease,
+    color 200ms ease;
+}
+
+.progressFill.complete {
+  background: var(--success);
 }

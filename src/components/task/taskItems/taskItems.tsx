@@ -1,45 +1,44 @@
 import { Check, CheckCheck, Circle, CircleDot, CircleDotDashed, Ellipsis } from "lucide-react";
-import type { TaskInstance } from "../../../types/task";
+import type { TaskCategory, TaskInstance } from "../../../types/task";
 import styles from "./taskItems.module.css";
 import { toMilitaryTimeFormat } from "../../../utils/utils";
 import { isOverdue, isTaskFinished } from "../../../utils/tasks/organizeTasks";
 import { useCurrentDate } from "../../../hooks/DateProvider";
+import { useAssignment } from "../../../hooks/AssignmentProvider";
 import { advanceTaskStatus } from "../../../utils/tasks/advanceTaskStatus";
 
 interface TaskItemsProps {
-  tasks: TaskInstance[]
-  updateTasks: (
-    updater: (tasks: TaskInstance[]) => TaskInstance[]
-  ) => void;
+  tasks: TaskInstance[];
+  category: Exclude<TaskCategory, "chart"> | "all",
+  timeFilter: "hour" | "overdue" | "all"
 };
 
 export default function TaskItems({
   tasks,
-  updateTasks
+  category,
+  timeFilter
 }: TaskItemsProps) {
-  
-  function toggleTask(taskId: string) {
-    updateTasks(task => 
-      task.map(task =>
-        task.id === taskId ? 
-          advanceTaskStatus(task) :
-          task
-      )
-    );
-  };
+  const categoryLabel = 
+    category === "all" ? "" : category
+
+  const timeLabel = 
+    timeFilter === "hour"
+      ? "scheduled this hour"
+      : timeFilter === "overdue"
+        ? "overdue"
+        : "scheduled this shift";
 
   return (
     <div className={styles.taskList}>
       {tasks.length === 0 ? (
         <div className={styles.emptyTasks}>
-          No tasks schedules this hour
+          No {categoryLabel} tasks {timeLabel}.
         </div>
       ) : (
         tasks.map(task => (
           <TaskItem
             key={task.id}
             task={task}
-            toggleTask={toggleTask}
           />
         ))
       )}
@@ -64,11 +63,11 @@ function status(task: TaskInstance) {
 
 function TaskItem({
   task,
-  toggleTask
 }: {
   task: TaskInstance,
-  toggleTask: (task: string) => void;
 }) {
+  const {updateTask} = useAssignment();
+
   const now = useCurrentDate();
   const currentStatus = status(task);
   const overdue = !isTaskFinished(task) && isOverdue(task, now);
@@ -79,7 +78,10 @@ function TaskItem({
         type="button"
         className={styles.buttonStatus}
         aria-label={`Progress ${task.name}`}
-        onClick={() => toggleTask(task.id)}
+        onClick={() => 
+          updateTask(
+            advanceTaskStatus(task)
+        )}
       >
         <span
           className={`${styles.taskStatus} ${styles[currentStatus]} ${overdue ? styles.overdue : ""}`}
@@ -91,7 +93,7 @@ function TaskItem({
 
         <span className={styles.taskDetails}>
           <span className={styles.taskNameRow}>
-            <span className={styles.taskName}>
+            <span className={`${styles.taskName} ${styles[task.category]}`}>
               {currentStatus=== "complete" ?
                 <s>{task.name}</s> :
                 task.name

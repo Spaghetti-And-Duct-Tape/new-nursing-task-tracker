@@ -5,15 +5,10 @@ import PatientCard from "../patient/patientCard/patientCard";
 
 interface DashboardProps {
   patients: Patient[];
-  updatePatient: (
-    id: string, 
-    updater: (patient: Patient) => Patient | null
-  ) => void
 }
 
 export default function Dashboard({ 
   patients,
-  updatePatient
 }: DashboardProps) {
   return (
     <div className={styles.dashboard}>
@@ -24,7 +19,6 @@ export default function Dashboard({
           >
             <PatientCard
               patient={patient} 
-              updatePatient={updatePatient}
             />
           </Fragment>
         ))}

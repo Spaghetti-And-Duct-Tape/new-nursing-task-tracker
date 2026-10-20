@@ -1,12 +1,12 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import styles from "./modal.module.css";
-import { ChevronDown, CircleAlert, Plus, X } from "lucide-react";
+import { ChevronDown, CircleAlert, Layers, Plus, X } from "lucide-react";
 import React, { useState } from "react";
 import { getCareModuleLibrary } from "../../data/getCareModuleLibrary";
 import { getNurseConfig } from "../../utils/config/config";
 import CareModuleSelector from "../patient/careModuleSelector/careModuleSelector";
 
-interface AddPatientModalProps {
+interface Props {
   patientRooms: string[];
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -21,21 +21,25 @@ export default function AddPatientModal({
   open,
   onOpenChange,
   onAddPatient
-}: AddPatientModalProps) {
+}: Props) {
   const careModules = getCareModuleLibrary();
   const defaultModules = getNurseConfig().modules;
 
   const [room, setRoom] = useState("");
   const [error, setError] = useState("");
-  const [expanded, setExpanded] = useState(false);
   const [selectedModuleIds, setSelectedModuleIds] = 
     useState<string[]>(() => [...defaultModules]);
+  
+    const [expanded, setExpanded] = useState(false);
 
-  function resetForm() {
+  function resetForm(resetModule = true) {
     setRoom("");
     setError("");
-    setExpanded(false);
-    setSelectedModuleIds([...defaultModules]);
+
+    if (resetModule) {
+      setSelectedModuleIds([...defaultModules]);
+      setExpanded(false);
+    };
   };
 
   function handleOpenChange(isOpen: boolean) {
@@ -55,7 +59,7 @@ export default function AddPatientModal({
         existingRoom.trim().toUpperCase() === roomNumber.toUpperCase() 
     );
 
-    if (!room.trim()) return;
+    if (!roomNumber) return;
     if (roomExists)
       return setError(`Room ${roomNumber} is already assigned.`)
 
@@ -70,9 +74,7 @@ export default function AddPatientModal({
     });
 
     if (continueAdding) {
-      setRoom("");
-      setError("");
-      setExpanded(false);
+      resetForm(false);
     } else {
       handleOpenChange(false);
     };
@@ -154,6 +156,7 @@ export default function AddPatientModal({
                   aria-expanded={expanded}
                 >
                   <span>
+                    <Layers size={16} />
                     Add Care Modules ({selectedModuleIds.length})
                   </span>
 
