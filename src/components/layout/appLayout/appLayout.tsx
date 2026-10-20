@@ -1,5 +1,4 @@
 import { useState } from "react";
-import type { Assignment } from "../../../types/assignment";
 import Header from "../header/header";
 import styles from "./appLayout.module.css"
 import type { AppView } from "../../../types/layout";
@@ -7,26 +6,11 @@ import AddPatientModal from "../../modals/addPatientModal";
 import Sidebar from "../navBar/sidebar";
 import BottomNav from "../navBar/bottomNav";
 import Dashboard from "../../views/dashboard";
-import type { Patient } from "../../../types/patient";
+import { useAssignment } from "../../../hooks/AssignmentProvider";
 
-interface Props {
-  assignment: Assignment;
-  onAddPatient: (patient: {
-    room: string,
-    moduleIds: string[]
-  }) => void;
-  updatePatient: (
-    id: string, 
-    updater: (patient: Patient) => Patient | null
-  ) => void
-};
+export default function AppLayout() {
+  const {assignment, addPatient} = useAssignment();
 
-export default function AppLayout({
-  assignment,
-  onAddPatient,
-  updatePatient
-}: Props) {
-  
   const [activeView, setActiveView] = useState<AppView>("dashboard");
   const [isPatientFormOpen, setIsPatientFormOpen] = useState(false);
 
@@ -50,7 +34,6 @@ export default function AppLayout({
         {activeView === "dashboard" && (
           <Dashboard
             patients={assignment.patients} 
-            updatePatient={updatePatient}
           />
         )}
       </main>
@@ -65,7 +48,7 @@ export default function AppLayout({
         patientRooms={assignment.patients.map(patient => patient.room)}
         open={isPatientFormOpen}
         onOpenChange={setIsPatientFormOpen}
-        onAddPatient={onAddPatient}
+        onAddPatient={addPatient}
       />
     </div>
   )

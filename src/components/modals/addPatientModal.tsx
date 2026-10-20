@@ -1,6 +1,6 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import styles from "./modal.module.css";
-import { ChevronDown, CircleAlert, Plus, X } from "lucide-react";
+import { ChevronDown, CircleAlert, Layers, Plus, X } from "lucide-react";
 import React, { useState } from "react";
 import { getCareModuleLibrary } from "../../data/getCareModuleLibrary";
 import { getNurseConfig } from "../../utils/config/config";
@@ -156,6 +156,7 @@ export default function AddPatientModal({
                   aria-expanded={expanded}
                 >
                   <span>
+                    <Layers size={16} />
                     Add Care Modules ({selectedModuleIds.length})
                   </span>
 

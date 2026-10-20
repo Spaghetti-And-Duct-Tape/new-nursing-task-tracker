@@ -8,25 +8,22 @@ import { filterTaskCategories, isTaskFinished, organizeTasks } from "../../../ut
 import TaskCategories from "../../task/taskCategories/taskCategories";
 import { useState } from "react";
 import TaskItems from "../../task/taskItems/taskItems";
-import type { TaskCategory, TaskInstance } from "../../../types/task";
+import type { TaskCategory } from "../../../types/task";
+import { useAssignment } from "../../../hooks/AssignmentProvider";
 import AddTaskModal from "../../modals/taskModals/addTaskModal";
-import { sortByTime } from "../../../utils/utils";
 
 interface PatientCardProps {
   patient: Patient;
-  updatePatient: (
-    id: string, 
-    updater: (patient: Patient) => Patient | null
-  ) => void;
 }
 
 export default function PatientCard({
   patient,
-  updatePatient
 }: PatientCardProps) {
   const [isTaskFormOpen, setIsTaskFormOpen] = useState(false);
 
   const now = useCurrentDate();
+  const {removePatient} = useAssignment();
+
   const tasks = patient.taskInstances
   const organizedTasks = organizeTasks(now, tasks);
 
@@ -46,25 +43,15 @@ export default function PatientCard({
       timedTasks :
       filterTaskCategories(timedTasks, activeCategory);
 
-  const sortedTasks = [...categorizedTasks].sort((a, b) => {
-    return Number(isTaskFinished(a)) - Number(isTaskFinished(b));
-  });
+  const displayedTasks = timeFilter === "hour" ?
+    [...categorizedTasks].sort((a, b) => {
+      return Number(isTaskFinished(a)) - Number(isTaskFinished(b));
+    }) :
+    categorizedTasks;
 
   const unfinishedTasks = timedTasks.filter(
     task => !isTaskFinished(task)
   );
-
-  function updateTasks(
-    update: TaskInstance | ((tasks: TaskInstance[]) => TaskInstance[])
-  ) {
-    updatePatient(patient.id, currentPatient => ({
-      ...currentPatient,
-      taskInstances:
-        typeof update === "function" 
-          ? update(currentPatient.taskInstances)
-          : sortByTime([...currentPatient.taskInstances, update])
-    }));
-  };
 
   return (
     <article
@@ -92,7 +79,9 @@ export default function PatientCard({
               type="button"
               className={styles.removeButton}
               aria-label={`Remove patient from room ${patient.room}`}
-              onClick={() => updatePatient(patient.id, () => null)}
+              onClick={() => 
+                removePatient(patient.id)
+              }
             >
               <Trash2 size={16} />
             </button>
@@ -153,9 +142,10 @@ export default function PatientCard({
             </button>
           </div>
 
-          <TaskItems
-            tasks={sortedTasks}
-            updateTasks={updateTasks}
+          <TaskItems 
+            category={activeCategory}
+            timeFilter={timeFilter}
+            tasks={displayedTasks} 
           />
         </section>
       </div>
@@ -164,7 +154,6 @@ export default function PatientCard({
         patient={patient}
         open={isTaskFormOpen}
         onOpenChange={setIsTaskFormOpen}
-        onAddTask={updateTasks}
       />
     </article>
   )

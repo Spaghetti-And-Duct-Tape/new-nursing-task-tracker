@@ -53,7 +53,7 @@ export default function TaskProgress({
         aria-valuenow={progress}
       >
         <div
-          className={styles.progressFill}
+          className={`${styles.progressFill} ${progress === 100 ? styles.complete : ""}`}
           style={{width: `${progress}%`}}
         />
       </div>

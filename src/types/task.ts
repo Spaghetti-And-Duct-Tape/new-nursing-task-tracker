@@ -38,7 +38,7 @@ export interface TaskInstance {
 
   patientId: string;
   moduleId?: string;
-  definitionId: string;
+  definitionId?: string;
 
 
   name: string;

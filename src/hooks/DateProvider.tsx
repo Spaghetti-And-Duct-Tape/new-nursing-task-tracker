@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { minuteMs } from "../utils/utils";
 
-const DateContext = createContext<Date | null> (null);
+const DateContext = createContext<Date | null>(null);
 
 export function DateProvider({children}: {children: React.ReactNode}) {
   const [now, setNow] = useState(() => new Date());
@@ -25,7 +25,7 @@ export function useCurrentDate(): Date {
   const context = useContext(DateContext);
 
   if (context === null) 
-    throw new Error("useCurrentDate must be use within a DateProvider");
+    throw new Error("useCurrentDate must be used within a DateProvider");
 
   return context;
 };

@@ -58,22 +58,22 @@
 
 /* Pending */
 .pending {
-  color: var(--blue-tasks);
+  color: var(--neutral);
 }
 
 /* Completed but not yet charted */
 .inProgress {
-  color: #fbbf24;
+  color: var(--warning);
 }
 
 /* Fully finished */
 .complete {
-  color: var(--green-tasks);
+  color: var(--success);
 }
 
 /* Overdue and unfinished */
 .taskStatus.overdue {
-  color: var(--red-tasks);
+  color: var(--error);
 }
 
 .taskDetails {
@@ -89,6 +89,7 @@
   align-items: bottom;
   flex-wrap: wrap;
   gap: 0.25rem 0.5rem;
+  white-space: nowrap;
 }
 
 .taskName {
@@ -99,10 +100,18 @@
   text-overflow: ellipsis;
 }
 
+.taskName.medication {
+  color: var(--medication);
+}
+
+.taskName.personal {
+  color: var(--personal);
+}
+
 .timeStamp {
   font-size: 0.6rem;
   white-space: nowrap;
-  color: var(--green-tasks);
+  color: var(--success);
 }
 
 .noteIndicator {

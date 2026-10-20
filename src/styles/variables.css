@@ -12,10 +12,14 @@
   --text-secondary: #91b0e2;
   --text-highlighted: #60a5fA;
 
-  /* Task colors */
-  --blue-tasks: #4b91ff;
-  --red-tasks: #fb7185;
-  --green-tasks: #34d399;
+  /* UI Colors */
+  --error: #fb7185;
+  --success: #34d399;
+  --warning: #fbbf24;
+  --neutral: #4b91ff;
+
+  --medication: #e879f9;
+  --personal: #5dd6db;
 
   /* Fonts */
   --font-primary: sans-serif; 

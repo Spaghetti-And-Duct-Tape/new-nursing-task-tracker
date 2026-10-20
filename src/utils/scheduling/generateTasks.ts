@@ -1,4 +1,4 @@
-import type { TaskDefinition, TaskInstance, TaskSource } from "../../types/task";
+import type { TaskDefinition, TaskInstance, TaskSchedule, TaskSource } from "../../types/task";
 import { addOffsetMin, getScheduledAt } from "../utils";
 
 interface GenerateTasksParams {
@@ -27,7 +27,7 @@ function generationStart(
   const graceStart = new Date(currentTime);
 
   graceStart.setHours(
-    graceStart.getHours() - 1,
+    graceStart.getHours() - 24,
     0,
     0,
     0
@@ -78,35 +78,52 @@ export function generateTasks(
     shiftEnd, 
     moduleId
   } = params;
-  const { schedule } = task;
 
-  const instances: TaskInstance[] = [];
+  const scheduledTimes = generateScheduledTimes(
+    task.schedule,
+    shiftStart,
+    shiftEnd
+  );
+
+  return scheduledTimes.map(scheduledAt => 
+    getInstance({
+      task,
+      patientId,
+      source,
+      scheduledAt,
+      moduleId
+    })
+  )
+};
+
+export function generateScheduledTimes(
+  schedule: TaskSchedule,
+  shiftStart: Date,
+  shiftEnd: Date
+): Date[] {
+  const scheduledTimes: Date[] = [];
   const start = generationStart(shiftStart);
 
   schedule.times.forEach(time => {
-    const scheduledAt = addOffsetMin(
-      getScheduledAt(time, shiftStart), 
+    const scheduleAt = addOffsetMin(
+      getScheduledAt(time, shiftStart),
       schedule.offset
     );
 
     for (let i = 0; i < schedule.repeat; i++) {
       const repeatedAt = addOffsetMin(
-        scheduledAt,
+        scheduleAt,
         i * schedule.interval
       );
 
       if (repeatedAt < start) continue;
       if (repeatedAt > shiftEnd) break;
-      
-      instances.push(getInstance({
-        task,
-        patientId,
-        source,
-        scheduledAt: repeatedAt,
-        moduleId
-      }));
+
+      scheduledTimes.push(repeatedAt);
     };
   });
 
-  return instances;
-};
+  return scheduledTimes.sort(
+    (a, b) => a.getTime() - b.getTime()
+  );
+}
