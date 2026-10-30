@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Check, X } from "lucide-react";
-import styles from "./TaskNoteEditor.module.css";
+import styles from "./taskNoteEditor.module.css";
 
 type TaskNoteEditorProps = {
   note: string;
