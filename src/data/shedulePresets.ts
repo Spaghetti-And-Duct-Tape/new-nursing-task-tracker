@@ -6,7 +6,7 @@ export const schedulePresets: SchedulePreset[] = [{
   times: ["07:00", "19:00"],
   interval: 1,
   intervalUnit: "hours",
-  repeat: 13
+  repeat: 12
 }, {
   id: "q2h",
   label: "Q2 Hour",
