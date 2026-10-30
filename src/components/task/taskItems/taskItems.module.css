@@ -18,7 +18,7 @@
 }
 
 .taskRow:hover {
-  background: #17243a;
+  background: var(--bg-elevated);
 }
 
 .taskRow:last-child {
@@ -73,7 +73,7 @@
 
 /* Overdue and unfinished */
 .taskStatus.overdue {
-  color: var(--error);
+  color: var(--danger);
 }
 
 .taskDetails {
@@ -188,4 +188,24 @@
 .taskOptions:focus-visible {
   outline: 2px solid var(--accent-primary);
   outline-offset: 2px;
+}
+
+.noteButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0.375rem;
+  margin: 0 0.15rem;
+  border: none;
+  border-radius: 0.375rem;
+
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.noteButton:hover {
+  background: var(--background-secondary);
+  color: var(--text-primary);
 }

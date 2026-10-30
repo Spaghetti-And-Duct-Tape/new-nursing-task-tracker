@@ -1,0 +1,74 @@
+.noteEditor {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  padding: 0.75rem;
+  margin-top: 0.5rem;
+
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 0.5rem;
+}
+
+.noteEditor textarea {
+  width: 100%;
+  min-height: 4rem;
+  box-sizing: border-box;
+
+  padding: 0.625rem;
+  background: #1e293b;
+  color: var(--text-primary);
+
+  border: 1px solid #334155;
+  border-radius: 0.375rem;
+
+  font: inherit;
+  font-size: var(--font-sm);
+  line-height: 1.5;
+
+  resize: vertical;
+  outline: none;
+}
+
+.noteEditor textarea:focus {
+  border-color: var(--accent-primary);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+
+  padding: 0.375rem 0.75rem;
+
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid #334155;
+  border-radius: 0.375rem;
+
+  font: inherit;
+  font-size: var(--font-sm);
+  cursor: pointer;
+}
+
+.actions button:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.actions .saveButton {
+  background: var(--accent-primary);
+  color: white;
+  border-color: transparent;
+}
+
+.actions .saveButton:hover {
+  filter: brightness(1.1);
+}

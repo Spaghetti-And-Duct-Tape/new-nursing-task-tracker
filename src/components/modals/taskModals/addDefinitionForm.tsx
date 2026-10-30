@@ -5,11 +5,12 @@ import type { Patient } from "../../../types/patient";
 import { Fragment, useState } from "react";
 import { useAssignment } from "../../../hooks/AssignmentProvider";
 import type { TaskWorkflow, TaskCategory, TaskDefinition } from "../../../types/task";
-import { CalendarClock, ChevronDown, CircleAlert, Clock3, Plus } from "lucide-react";
+import { CalendarClock, CircleAlert, Clock3, Plus } from "lucide-react";
 import { getMaxRepeat, getTimeString, toTimeString } from "../../../utils/utils";
 import type { TimeString } from "../../../types/time";
 import { schedulePresets } from "../../../data/shedulePresets";
 import { generateScheduledTimes } from "../../../utils/scheduling/generateTasks";
+import Expandable from "../../utils/expandable";
 
 export function AddDefinitionForm({
   patient,
@@ -25,18 +26,12 @@ export function AddDefinitionForm({
   const [workflow, setWorkflow] = useState<TaskWorkflow>("chart");
   const [times, setTimes] = useState(() => [{
     id: crypto.randomUUID(),
-    value: getTimeString(assignment.shiftStart).slice(0, 2)
-  }, {
-    id: crypto.randomUUID(),
     value: ""
   }
   ]);
   const [interval, setInterval] = useState(0);
   const [intervalUnit, setIntervalUnit] = useState<"minutes" | "hours">("hours");
   const [repeat, setRepeat] = useState(1);
-  
-  const [showRepeatOptions, setShowRepeatOptions] = useState(false);
-  const [showPreview, setShowPreview] = useState(false);
 
   const [error, setError] = useState({
     name: "",
@@ -206,6 +201,26 @@ export function AddDefinitionForm({
     })
   };
 
+  function handleIntervalChange(
+    newInterval: number,
+    newUnit: "minutes" | "hours"
+  ) {
+    const intervalMinutes =
+      newUnit === "hours" ? newInterval * 60 : newInterval;
+      
+    setInterval(newInterval);
+    setIntervalUnit(newUnit);
+      
+    setRepeat(
+      getMaxRepeat(
+        validTimes,
+        intervalMinutes,
+        assignment.shiftStart,
+        assignment.shiftEnd
+      )
+    );
+  };
+
   function applyPreset(presetId: string) {
     const preset = schedulePresets.find(
       preset => preset.id === presetId
@@ -244,7 +259,7 @@ export function AddDefinitionForm({
           <section className={styles.section}>
             <div className={styles.field}>
               <label htmlFor="task-name">
-                Task Name
+                Task Name*
               </label>
 
               <input
@@ -277,7 +292,7 @@ export function AddDefinitionForm({
             <div className={styles.fieldRow}>
               <div className={styles.field}>
                 <label htmlFor="task-category">
-                  Category
+                  Category*
                 </label>
 
                 <select
@@ -288,14 +303,16 @@ export function AddDefinitionForm({
                     setCategory(e.target.value as TaskCategory)
                   }
                 >
-                  <option value="medication">Medication</option>
+                  <option value="medication">
+                    Medication
+                  </option>
                   <option value="personal">Personal</option>
                 </select>
               </div>
 
               <div className={styles.field}>
                 <label htmlFor="task-workflow">
-                  Tracking
+                  Completion Type*
                 </label>
 
                 <select
@@ -304,11 +321,9 @@ export function AddDefinitionForm({
                   value={workflow}
                   onChange={(e) => setWorkflow(e.target.value as TaskWorkflow)}
                 >
-                  <option value="complete">Mark as Done</option>
-                  <option value="chart">Mark as Charted</option>
-                  <option value="complete-and-chart">
-                    Done, Then Charted
-                  </option>
+                  <option value="complete">Complete (1 Click)</option>
+                  <option value="chart">Chart (1 Click)</option>
+                  <option value="complete-and-chart">Complete + Chart (2 Clicks)</option>
                 </select>
               </div>
             </div>
@@ -335,235 +350,200 @@ export function AddDefinitionForm({
                   </option>
                 ))}
 
-                <option value="custom">Custom</option>
+                <option 
+                  value="custom"
+                  disabled
+                >
+                  Custom
+                </option>
               </select>
+            </div>
+
+            <div className={styles.field}>
+              <label>
+                {repeat > 1 ? "Start Time(s)" : "Task Times"}
+              </label>
+
+              <div className={styles.timeInputs}>
+                {times.map(time => (
+                  <Fragment key={time.id}>
+                    <div className={styles.timeRow}>
+                      <input
+                        id={`task-time-${time.id}`}
+                        value={time.value}
+                        onChange={(e) =>
+                          handleTimeChange(time.id, e.target.value)
+                        }
+                        placeholder="e.g. now, hour, 7, 0700, 18:00"
+                        aria-label="Scheduled time"
+                        aria-describedby={
+                          error.name === `time ${time.id}`
+                            ? `time-error-${time.id}`
+                            : undefined
+                        }
+                      />
+                    </div>
+
+                    {error.name === `time ${time.id}` && (
+                      <p
+                        id={`time-error-${time.id}`}
+                        className={styles.fieldError}
+                        role="alert"
+                      >
+                        <CircleAlert
+                          size={14}
+                          aria-hidden="true"
+                        />
+                        {error.message}
+                      </p>
+                    )}
+                  </Fragment>
+                ))}
+              </div>
             </div>
           </section>
 
-          {/* CUSTOMIZE SCHEDULE */}
-          <section className={styles.moreOptions}>
-            <button
-              type="button"
-              className={styles.moduleToggle}
-              onClick={() =>
-                setShowRepeatOptions(prev => !prev)
-              }
-              aria-expanded={showRepeatOptions}
-            >
-              <span>
-                <Clock3 size={16} />
-                Customize Schedule
-              </span>
+          <Expandable
+            title="Customize Schedule"
+            icon={Clock3}
+          >
+            <div className={styles.advancedContent}>
+              <div className={styles.field}>
+                <label htmlFor="task-interval">
+                  Repeat Every
+                </label>
 
-              <ChevronDown
-                size={16}
-                className={
-                  showRepeatOptions ? styles.chevronOpen : ""
-                }
-              />
-            </button>
+                <div className={styles.intervalInput}>
+                  <input
+                    id="task-interval"
+                    type="number"
+                    min={0}
+                    step={1}
+                    value={interval}
+                    onChange={(e) =>
+                      handleIntervalChange(
+                        Number(e.target.value), 
+                        intervalUnit
+                      )
+                    }
+                    aria-describedby={
+                      error.name === "interval"
+                        ? "interval-error"
+                        : undefined
+                    }
+                  />
 
-            {showRepeatOptions && (
-              <div className={styles.advancedContent}>
-                <div className={styles.field}>
-                  <label>
-                    Scheduled Times
-                  </label>
-
-                  <div className={styles.timeInputs}>
-                    {times.map(time => (
-                      <Fragment key={time.id}>
-                        <div className={styles.timeRow}>
-                          <input
-                            id={`task-time-${time.id}`}
-                            value={time.value}
-                            onChange={(e) =>
-                              handleTimeChange(time.id, e.target.value)
-                            }
-                            placeholder="e.g. now, hour, 7, 0700, 18:00"
-                            aria-label="Scheduled time"
-                            aria-describedby={
-                              error.name === `time ${time.id}`
-                                ? `time-error-${time.id}`
-                                : undefined
-                            }
-                          />
-                        </div>
-
-                        {error.name === `time ${time.id}` && (
-                          <p
-                            id={`time-error-${time.id}`}
-                            className={styles.fieldError}
-                            role="alert"
-                          >
-                            <CircleAlert
-                              size={14}
-                              aria-hidden="true"
-                            />
-                            {error.message}
-                          </p>
-                        )}
-                      </Fragment>
-                    ))}
-                  </div>
-                </div>
-
-                {/* REPEAT INTERVAL */}
-                <div className={styles.field}>
-                  <label htmlFor="task-interval">
-                    Repeat Every
-                  </label>
-
-                  <div className={styles.intervalInput}>
-                    <input
-                      id="task-interval"
-                      type="number"
-                      min={0}
-                      step={1}
-                      value={interval}
-                      onChange={(e) =>
-                        setInterval(Number(e.target.value))
-                      }
-                      aria-describedby={
-                        error.name === "interval"
-                          ? "interval-error"
-                          : undefined
-                      }
-                    />
-
-                    <select
-                      value={intervalUnit}
-                      onChange={(e) =>
-                        setIntervalUnit(
-                          e.target.value as "minutes" | "hours"
-                        )
-                      }
-                      aria-label="Interval unit"
-                    >
-                      <option value="minutes">Minutes</option>
-                      <option value="hours">Hours</option>
-                    </select>
-                  </div>
-
-                  {error.name === "interval" && (
-                    <p
-                      id="interval-error"
-                      className={styles.fieldError}
-                      role="alert"
-                    >
-                      <CircleAlert
-                        size={14}
-                        aria-hidden="true"
-                      />
-                      {error.message}
-                    </p>
-                  )}
-                </div>
-
-                {/* NUMBER OF OCCURRENCES */}
-                <div className={styles.field}>
-                  <div className={styles.repeatHeader}>
-                    <label htmlFor="task-repeat">
-                      Number of Occurrences
-                    </label>
-
-                    <input
-                      id="task-repeat"
-                      type="number"
-                      min={1}
-                      max={maxRepeat}
-                      step={1}
-                      value={repeat}
-                      onChange={(e) =>
-                        setRepeat(Number(e.target.value))
-                      }
-                      aria-describedby={
-                        error.name === "repeat"
-                          ? "repeat-error"
-                          : undefined
-                      }
-                    />
-                  </div>
-
-                  <div className={styles.repeatSlider}>
-                    <input
-                      type="range"
-                      min={1}
-                      max={Math.max(1, maxRepeat)}
-                      step={1}
-                      value={Math.min(
-                        repeat,
-                        Math.max(1, maxRepeat)
-                      )}
-                      onChange={(e) =>
-                        setRepeat(Number(e.target.value))
-                      }
-                      disabled={maxRepeat <= 1}
-                      aria-label="Number of occurrences"
-                    />
-
-                    <div className={styles.sliderLabels}>
-                      <span>1</span>
-                      <span>{maxRepeat}</span>
-                    </div>
-                  </div>
-
-                  {error.name === "repeat" && (
-                    <p
-                      id="repeat-error"
-                      className={styles.fieldError}
-                      role="alert"
-                    >
-                      <CircleAlert
-                        size={14}
-                        aria-hidden="true"
-                      />
-                      {error.message}
-                    </p>
-                  )}
-                </div>
-              </div>
-            )}
-          </section>
-
-          <section className={styles.moreOptions}>
-            <button
-              type="button"
-              className={styles.moduleToggle}
-              onClick={() => 
-                setShowPreview(prev => !prev)
-              }
-              aria-expanded={showPreview}
-            >
-              <span>
-                <CalendarClock size={16} />
-                Preview Schedule
-              </span>
-
-              <ChevronDown
-                size={16}
-                className={
-                  showPreview ? styles.chevronOpen : ""
-                }
-              />
-            </button>
-
-            {showPreview && (
-              <div className={styles.previewTimes}>
-                {previewTimes.map((time, index) => (
-                  <span
-                    key={`${time.getTime()}-${index}`}
-                    className={styles.previewTime}
+                  <select
+                    value={intervalUnit}
+                    onChange={(e) =>
+                      handleIntervalChange(
+                        interval, 
+                        e.target.value as "minutes" | "hours"
+                      )
+                    }
+                    aria-label="Interval unit"
                   >
-                    {getTimeString(time)}
-                  </span>
-                ))}
+                    <option value="minutes">Minutes</option>
+                    <option value="hours">Hours</option>
+                  </select>
+                </div>
+
+                {error.name === "interval" && (
+                  <p
+                    id="interval-error"
+                    className={styles.fieldError}
+                    role="alert"
+                  >
+                    <CircleAlert
+                      size={14}
+                      aria-hidden="true"
+                    />
+                    {error.message}
+                  </p>
+                )}
               </div>
-            )}
-          </section>
+              
+              <div className={styles.field}>
+                <div className={styles.repeatHeader}>
+                  <label htmlFor="task-repeat">
+                    Number of Occurrences
+                  </label>
+
+                  <input
+                    id="task-repeat"
+                    type="number"
+                    min={1}
+                    max={maxRepeat}
+                    step={1}
+                    value={repeat}
+                    onChange={(e) =>
+                      setRepeat(Number(e.target.value))
+                    }
+                    aria-describedby={
+                      error.name === "repeat"
+                        ? "repeat-error"
+                        : undefined
+                    }
+                  />
+                </div>
+
+                <div className={styles.repeatSlider}>
+                  <input
+                    type="range"
+                    min={1}
+                    max={Math.max(1, maxRepeat)}
+                    step={1}
+                    value={Math.min(
+                      repeat,
+                      Math.max(1, maxRepeat)
+                    )}
+                    onChange={(e) =>
+                      setRepeat(Number(e.target.value))
+                    }
+                    disabled={maxRepeat <= 1}
+                    aria-label="Number of occurrences"
+                  />
+
+                  <div className={styles.sliderLabels}>
+                    <span>1</span>
+                    <span>{maxRepeat}</span>
+                  </div>
+                </div>
+
+                {error.name === "repeat" && (
+                  <p
+                    id="repeat-error"
+                    className={styles.fieldError}
+                    role="alert"
+                  >
+                    <CircleAlert
+                      size={14}
+                      aria-hidden="true"
+                    />
+                    {error.message}
+                  </p>
+                )}
+              </div>
+            </div> 
+          </Expandable>
+
+          <Expandable
+            title="Preview Schedule"
+            icon={CalendarClock}
+          >
+            <div className={styles.previewTimes}>
+              {previewTimes.map((time, index) => (
+                <span
+                  key={`${time.getTime()}-${index}`}
+                  className={styles.previewTime}
+                >
+                  {getTimeString(time)}
+                </span>
+              ))}
+            </div>
+          </Expandable>
         </div>
 
-        {/* FORM ACTIONS */}
         <div className={styles.actions}>
           <button
             type="submit"

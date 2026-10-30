@@ -13,7 +13,7 @@ export const defaultConfig: NursingConfig = {
     defaultNightShift
   ],
 
-  defaultShift: defaultNightShift.id,
+  defaultShift: defaultDayShift.id,
 
   modules: [
     core.id

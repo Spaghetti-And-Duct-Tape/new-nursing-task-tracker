@@ -32,6 +32,9 @@ type AssignmentContextValue = {
   updateTask: (
     updatedTask: TaskInstance
   ) => void;
+  deleteTask: (
+    task: TaskInstance
+  ) => void;
 }
 
 const AssignmentContext = createContext<AssignmentContextValue | null>(null);
@@ -147,7 +150,22 @@ export function AssignmentProvider({children} : {children: React.ReactNode}) {
           ? updatedTask
           : task
       )
-    })
+    });
+  };
+
+  function deleteTask(task: TaskInstance) {
+    const patient = assignment.patients.find(
+      patient => patient.id === task.patientId
+    );
+
+    if (!patient) return;
+
+    updatePatient({
+      ...patient,
+      taskInstances: patient.taskInstances.filter(
+        patientTask => patientTask.id !== task.id
+      )
+    });
   };
 
   function setAndSaveAssignment(assignment: Assignment) {
@@ -168,7 +186,8 @@ export function AssignmentProvider({children} : {children: React.ReactNode}) {
         removePatient,
         addTaskDefinition,
         addTaskInstance,
-        updateTask
+        updateTask, 
+        deleteTask
       }}
     >
       {children}

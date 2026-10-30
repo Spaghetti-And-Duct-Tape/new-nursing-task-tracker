@@ -1,4 +1,4 @@
-import { Check, CheckCheck, Circle, CircleDot, CircleDotDashed, Ellipsis } from "lucide-react";
+import { Check, CheckCheck, Circle, CircleDot, CircleDotDashed, StickyNote } from "lucide-react";
 import type { TaskCategory, TaskInstance } from "../../../types/task";
 import styles from "./taskItems.module.css";
 import { toMilitaryTimeFormat } from "../../../utils/utils";
@@ -6,6 +6,9 @@ import { isOverdue, isTaskFinished } from "../../../utils/tasks/organizeTasks";
 import { useCurrentDate } from "../../../hooks/DateProvider";
 import { useAssignment } from "../../../hooks/AssignmentProvider";
 import { advanceTaskStatus } from "../../../utils/tasks/advanceTaskStatus";
+import TaskOptionsMenu from "../taskOptionsMenu/taskOptionsMenu";
+import { useState } from "react";
+import { TaskNoteEditor } from "../taskNoteEditor/taskNoteEditor";
 
 interface TaskItemsProps {
   tasks: TaskInstance[];
@@ -66,74 +69,96 @@ function TaskItem({
 }: {
   task: TaskInstance,
 }) {
-  const {updateTask} = useAssignment();
+  const {updateTask, deleteTask} = useAssignment();
 
   const now = useCurrentDate();
   const currentStatus = status(task);
   const overdue = !isTaskFinished(task) && isOverdue(task, now);
 
+  const [editingNote, setEditingNote] = useState(false);
+
   return (
-    <div className={styles.taskRow}>
-      <button
-        type="button"
-        className={styles.buttonStatus}
-        aria-label={`Progress ${task.name}`}
-        onClick={() => 
-          updateTask(
-            advanceTaskStatus(task)
-        )}
-      >
-        <span
-          className={`${styles.taskStatus} ${styles[currentStatus]} ${overdue ? styles.overdue : ""}`}
+    <div className={styles.taskItem}>
+      <div className={styles.taskRow}>
+        <button
+          type="button"
+          className={styles.buttonStatus}
+          aria-label={`Progress ${task.name}`}
+          onClick={() => 
+            updateTask(
+              advanceTaskStatus(task)
+          )}
+          onDoubleClick={() => setEditingNote(prev => !prev)}
         >
-          <span className={styles.statusIcon}>
-            <TaskStatusIcon task={task} />
-          </span>
-        </span>
-
-        <span className={styles.taskDetails}>
-          <span className={styles.taskNameRow}>
-            <span className={`${styles.taskName} ${styles[task.category]}`}>
-              {currentStatus=== "complete" ?
-                <s>{task.name}</s> :
-                task.name
-              }
+          <span
+            className={`${styles.taskStatus} ${styles[currentStatus]} ${overdue ? styles.overdue : ""}`}
+          >
+            <span className={styles.statusIcon}>
+              <TaskStatusIcon task={task} />
             </span>
-            {(task.charted && task.chartedAt && (
-              <span className={styles.timeStamp}>
-                Charted {toMilitaryTimeFormat(new Date(task.chartedAt))}
-              </span>
-            )) || (task.completed && task.completedAt && (
-              <span className={styles.timeStamp}>
-                Completed {toMilitaryTimeFormat(new Date(task.completedAt))}
-              </span>
-            ))}
           </span>
-          <span className={styles.taskMeta}>
-            <span className={styles.taskTime}>
-              {toMilitaryTimeFormat(new Date(task.scheduledAt))}
-            </span>
 
-            {task.note?.trim() && (
-              <>
-                <span className={styles.taskSeparator}>·</span>
-
-                <span className={styles.taskNote}>
-                  {task.note}
+          <span className={styles.taskDetails}>
+            <span className={styles.taskNameRow}>
+              <span className={`${styles.taskName} ${styles[task.category]}`}>
+                {currentStatus=== "complete" ?
+                  <s>{task.name}</s> :
+                  task.name
+                }
+              </span>
+              {(task.charted && task.chartedAt && (
+                <span className={styles.timeStamp}>
+                  Charted {toMilitaryTimeFormat(new Date(task.chartedAt))}
                 </span>
-              </>
-            )}
-          </span>
-        </span>
-      </button>
+              )) || (task.completed && task.completedAt && (
+                <span className={styles.timeStamp}>
+                  Completed {toMilitaryTimeFormat(new Date(task.completedAt))}
+                </span>
+              ))}
+            </span>
+            <span className={styles.taskMeta}>
+              <span className={styles.taskTime}>
+                {toMilitaryTimeFormat(new Date(task.scheduledAt))}
+              </span>
 
-      <button
-        type="button"
-        className={styles.taskOptions}
-        aria-label={`Options for ${task.name}`}
-      >
-        <Ellipsis size={18} />
-      </button>
+              {task.note?.trim() && (
+                <>
+                  <span className={styles.taskSeparator}>·</span>
+
+                  <span className={styles.taskNote}>
+                    {task.note}
+                  </span>
+                </>
+              )}
+            </span>
+          </span>
+        </button>
+        <button
+          type="button"
+          className={styles.noteButton}
+          onClick={() => setEditingNote(prev => !prev)}
+          aria-label={`Edit note for ${task.name}`}
+          >
+            <StickyNote size={16} />
+          </button>
+
+        <TaskOptionsMenu
+          onEditNote={() => setEditingNote(true)} 
+          onDelete={() => deleteTask(task)}
+        />
+
+      </div>
+
+      {editingNote && (
+        <TaskNoteEditor
+          note={task.note ?? ""}
+          onSave={(note) => {
+            updateTask({...task, note});
+            setEditingNote(false)
+          }} 
+          onCancel={() => setEditingNote(false)}
+        />
+      )}
     </div>
   )
 };
