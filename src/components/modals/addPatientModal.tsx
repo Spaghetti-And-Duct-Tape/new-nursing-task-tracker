@@ -1,6 +1,6 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import styles from "./modal.module.css";
-import { ChevronDown, CircleAlert, Layers, Plus, X } from "lucide-react";
+import { CircleAlert, Layers, Plus, X } from "lucide-react";
 import React, { useState } from "react";
 import { getCareModuleLibrary } from "../../data/getCareModuleLibrary";
 import { getNurseConfig } from "../../utils/config/config";
@@ -30,17 +30,13 @@ export default function AddPatientModal({
   const [error, setError] = useState("");
   const [selectedModuleIds, setSelectedModuleIds] = 
     useState<string[]>(() => [...defaultModules]);
-  
-    const [expanded, setExpanded] = useState(false);
 
   function resetForm(resetModule = true) {
     setRoom("");
     setError("");
 
-    if (resetModule) {
+    if (resetModule)
       setSelectedModuleIds([...defaultModules]);
-      setExpanded(false);
-    };
   };
 
   function handleOpenChange(isOpen: boolean) {

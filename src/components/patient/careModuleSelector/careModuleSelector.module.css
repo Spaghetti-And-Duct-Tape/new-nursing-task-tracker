@@ -17,6 +17,7 @@
 
   font: inherit;
   font-size: var(--font-sm);
+  margin: 0.1rem;
 }
 
 .moduleSelector > input::placeholder {

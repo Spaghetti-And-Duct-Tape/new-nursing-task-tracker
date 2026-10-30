@@ -88,7 +88,6 @@ function TaskItem({
             updateTask(
               advanceTaskStatus(task)
           )}
-          onDoubleClick={() => setEditingNote(prev => !prev)}
         >
           <span
             className={`${styles.taskStatus} ${styles[currentStatus]} ${overdue ? styles.overdue : ""}`}
@@ -169,11 +168,14 @@ function TaskStatusIcon({
 } : {
   task: TaskInstance;
 }) {
-  if (task.charted) 
-    return <CheckCheck size={18} />;
-
-  if (task.completed) 
-    return <Check size={18} />;
+  const partiallyComplete =
+    task.workflow === "complete-and-chart" &&
+    task.completed &&
+    !task.charted;
+    
+  if (partiallyComplete) return <Check size={18} />;
+    
+  if (task.completed || task.charted) return <CheckCheck size={18} />;
 
   switch (task.workflow) {
     case "complete":
