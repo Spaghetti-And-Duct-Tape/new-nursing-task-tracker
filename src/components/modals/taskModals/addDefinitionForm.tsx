@@ -77,8 +77,6 @@ export function AddDefinitionForm({
     assignment.shiftEnd
   );
 
-  console.log(maxRepeat)
-
   function handleOpenChange(isOpen: boolean) {
     if (!isOpen) resetForm();
 
