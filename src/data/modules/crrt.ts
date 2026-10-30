@@ -20,6 +20,18 @@ const crrt: CareModule = {
         interval: 360,
         repeat: 2
       }
+    }, {
+      id: "crrt-charges",
+      name: "Charges - CRRT",
+      category: "chart",
+      workflow: "chart",
+
+      schedule: {
+        times: ["07:00"],
+        offset: 0,
+        interval: 0,
+        repeat: 1
+      }
     }]
 };
 

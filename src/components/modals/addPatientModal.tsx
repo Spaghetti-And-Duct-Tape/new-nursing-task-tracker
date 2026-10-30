@@ -5,6 +5,7 @@ import React, { useState } from "react";
 import { getCareModuleLibrary } from "../../data/getCareModuleLibrary";
 import { getNurseConfig } from "../../utils/config/config";
 import CareModuleSelector from "../patient/careModuleSelector/careModuleSelector";
+import Expandable from "../utils/expandable";
 
 interface Props {
   patientRooms: string[];
@@ -146,33 +147,16 @@ export default function AddPatientModal({
                 )}
               </div>
 
-              <div 
-                className={styles.moduleSection}
+              <Expandable
+                title="Add Care Modules"
+                icon={Layers}
               >
-                <button
-                  type="button"
-                  className={styles.moduleToggle}
-                  onClick={() => setExpanded(prev => !prev)}
-                  aria-expanded={expanded}
-                >
-                  <span>
-                    <Layers size={16} />
-                    Add Care Modules ({selectedModuleIds.length})
-                  </span>
-
-                  <ChevronDown
-                    size={18}
-                    className={expanded ? styles.chevronOpen : ""}
-                  />
-                </button>
-                {expanded && (
-                  <CareModuleSelector
-                    careModules={careModules}
-                    selectedModuleIds={selectedModuleIds}
-                    onChange={setSelectedModuleIds} 
-                  />)
-                }
-              </div>
+                <CareModuleSelector
+                  careModules={careModules}
+                  selectedModuleIds={selectedModuleIds}
+                  onChange={setSelectedModuleIds}
+                />
+              </Expandable>
             </div>
 
             <div className={styles.actions}>

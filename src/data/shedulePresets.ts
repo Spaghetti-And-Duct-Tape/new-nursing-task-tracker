@@ -29,6 +29,13 @@ export const schedulePresets: SchedulePreset[] = [{
   intervalUnit: "hours",
   repeat: 2
 }, {
+  id: "q8h",
+  label: "Q8 Hours",
+  times: ["08:00", "20:00"],
+  interval: 8,
+  intervalUnit: "hours",
+  repeat: 2
+}, {
   id: "achs",
   label: "ACHS",
   times: ["08:30", "12:30", "17:30", "21:00"],

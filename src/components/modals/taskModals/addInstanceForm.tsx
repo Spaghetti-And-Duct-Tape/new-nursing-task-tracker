@@ -1,12 +1,13 @@
 import * as Dialog from "@radix-ui/react-dialog";
 
 import styles from "../modal.module.css";
-import { ChevronDown, Info, Plus, Settings2 } from "lucide-react";
+import { Info, Plus, Settings2 } from "lucide-react";
 import { useState } from "react";
 import type { Patient } from "../../../types/patient";
 import type { TaskInstance } from "../../../types/task";
 import { getDateTimeLocal } from "../../../utils/utils";
 import { useAssignment } from "../../../hooks/AssignmentProvider";
+import Expandable from "../../utils/expandable";
 
 function createInstance(patient: Patient): Omit<TaskInstance, "scheduledAt"> {
   return {
@@ -30,8 +31,7 @@ export function AddInstanceForm({
   onOpenChange: (open: boolean) => void;
 }) {
   const {addTaskInstance} = useAssignment();
-
-  const [expanded, setExpanded] = useState(false);
+  
   const [instance, setInstance] = useState(() =>
     createInstance(patient)
   );
@@ -120,7 +120,7 @@ export function AddInstanceForm({
         <div className={styles.formContent}>
           <div className={styles.field}>
             <label htmlFor="task-name">
-              Task Name
+              Task Name*
             </label>
 
             <input
@@ -135,7 +135,7 @@ export function AddInstanceForm({
 
           <div className={styles.field}>
             <label htmlFor="task-time">
-              Scheduled Time
+              Scheduled Time*
             </label>
 
             <input
@@ -161,62 +161,44 @@ export function AddInstanceForm({
             />
           </div>
 
-          <div className={styles.moreOptions}>
-            <button
-              type="button"
-              className={styles.moduleToggle}
-              onClick={() => setExpanded(prev => !prev)}
-              aria-expanded={expanded}
-            >
-              <span>
-                <Settings2 size={16} />
-                More Options
-              </span>
-
-              <ChevronDown
-                size={18}
-                className={expanded ? styles.chevronOpen : ""}
-              />
-            </button>
-
-            {expanded && (
-              <div className={styles.fieldRow}>
-                <div className={styles.field}>
-                  <label htmlFor="task-category">
-                    Category
-                  </label>
+          <Expandable
+            title="More Options"
+            icon={Settings2}
+          >
+            <div className={styles.fieldRow}>
+              <div className={styles.field}>
+                <label htmlFor="task-category">
+                  Category*
+                </label>
                       
-                  <select
-                    id="task-category"
-                    name="category"
-                    value={instance.category}
-                    onChange={handleChange}
-                  >
-                    <option value="medication">Medication</option>
-                    <option value="personal">Personal</option>
-                  </select>
-                </div>
-
-                <div className={styles.field}>
-                  <label htmlFor="task-workflow">
-                    Tracking
-                  </label>
-                  <select
-                    id="task-workflow"
-                    name="workflow"
-                    value={instance.workflow}
-                    onChange={handleChange}
-                  >
-                    <option value="complete">Mark as Done</option>
-                    <option value="chart">Mark as Charted</option>
-                    <option value="complete-and-chart">
-                      Done, Then Charted
-                    </option>
-                  </select>
-               </div>
+                <select
+                  id="task-category"
+                  name="category"
+                  value={instance.category}
+                  onChange={handleChange}
+                >
+                  <option value="medication">Medication</option>
+                  <option value="personal">Personal</option>
+                </select>
               </div>
-            )}
-          </div>
+
+              <div className={styles.field}>
+                <label htmlFor="task-workflow">
+                  Completion Type*
+                </label>
+                <select
+                  id="task-workflow"
+                  name="workflow"
+                  value={instance.workflow}
+                  onChange={handleChange}
+                >
+                  <option value="complete">Complete (1 Click)</option>
+                  <option value="chart">Chart (1 Click)</option>
+                  <option value="complete-and-chart">Complete + Chart (2 Clicks)</option>
+                </select>
+              </div>
+            </div>
+          </Expandable>
         </div>
 
         <div className={styles.actions}>

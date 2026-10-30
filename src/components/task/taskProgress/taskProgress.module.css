@@ -28,7 +28,7 @@
 }
 
 .overdue {
-  color: var(--error);
+  color: var(--danger);
   background: rgba(251, 113, 133, 0.13);
 }
 

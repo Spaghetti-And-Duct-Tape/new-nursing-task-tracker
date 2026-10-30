@@ -1,0 +1,51 @@
+.expandableToggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  width: 100%;
+  padding: 0.5rem 0;
+
+  border: none;
+  background: transparent;
+
+  color: var(--text-primary);
+  font: inherit;
+  font-size: var(--font-sm);
+  font-weight: var(--weight-medium);
+
+  cursor: pointer;
+}
+
+.expandableToggle svg {
+  color: var(--text-secondary);
+  transition: transform 150ms ease;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+.expandableToggle:hover {
+  color: var(--accent-primary);
+}
+
+.expandableToggle span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.expandableToggle svg {
+  flex-shrink: 0;
+}
+
+.expandableContent {
+  overflow-x: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .expandableToggle svg {
+    transition: none;
+  }
+}
