@@ -123,7 +123,7 @@ export function generateScheduledTimes(
     };
   });
 
-  return scheduledTimes.sort(
-    (a, b) => a.getTime() - b.getTime()
-  );
-}
+  return [...new Set(scheduledTimes.map(date => date.getTime()))]
+    .map(timestamp => new Date(timestamp))
+    .sort((a, b) => a.getTime() - b.getTime());
+};
