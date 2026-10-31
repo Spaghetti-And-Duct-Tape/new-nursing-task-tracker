@@ -3,7 +3,7 @@ import type { TaskInstance } from "../../../types/task";
 import { minuteMs } from "../../../utils/utils";
 
 import styles from "./shiftTimeline.module.css";
-import { currentHourTasks, isOverdue, isTaskFinished, organizeTasks } from "../../../utils/tasks/organizeTasks";
+import { currentHourTasks, isOverdue, isTaskFinished } from "../../../utils/tasks/organizeTasks";
 
 interface Props {
   tasks: TaskInstance[];
