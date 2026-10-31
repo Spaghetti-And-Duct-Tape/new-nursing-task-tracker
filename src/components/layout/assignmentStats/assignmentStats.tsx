@@ -42,7 +42,7 @@ export function AssignmentStats({
           <span>{tasks.length}</span>
           <ClipboardList />
         </div>
-        <p>Total Tasks</p>
+        <p>Total</p>
       </div>
 
       <div className={styles.stat}>
@@ -50,7 +50,7 @@ export function AssignmentStats({
           <span>{completedTasks}</span>
           <CheckCircle2Icon />
         </div>
-        <p>Completed Tasks</p>
+        <p>Completed</p>
       </div>
 
       <div className={styles.stat}>
@@ -58,7 +58,7 @@ export function AssignmentStats({
           <span>{organizedTasks.overdueTasks.length}</span>
           <TriangleAlert />
         </div>
-        <p>Overdue Tasks</p>
+        <p>Overdue</p>
       </div>
     </div>
   )
