@@ -2,6 +2,6 @@ import type { AppView } from "../../../types/layout";
 
 export interface NavProps {
   activeView: AppView
-  onNavigate: (AppView: AppView) => void;
+  onNavigate: (view: AppView) => void;
   onAddPatient: () => void;
 }

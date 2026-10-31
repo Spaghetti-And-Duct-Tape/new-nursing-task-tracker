@@ -3,18 +3,22 @@ import { Check, X } from "lucide-react";
 import styles from "./taskNoteEditor.module.css";
 
 type TaskNoteEditorProps = {
+  name: string;
   note: string;
   onSave: (note: string) => void;
   onCancel: () => void;
 };
 
 export function TaskNoteEditor({
+  name,
   note,
   onSave,
   onCancel,
 }: TaskNoteEditorProps) {
   const [draft, setDraft] = useState(note);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  console.log(name)
   
   useEffect(() => {
     const frame = requestAnimationFrame(() => {
@@ -34,6 +38,7 @@ export function TaskNoteEditor({
 
   return (
     <div className={styles.noteEditor}>
+      <h3 className={styles.noteHeading}>{name}</h3>
       <textarea
         ref={textareaRef}
         value={draft}

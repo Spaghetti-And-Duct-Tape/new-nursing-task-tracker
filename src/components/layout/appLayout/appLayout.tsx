@@ -32,8 +32,8 @@ export default function AppLayout() {
         />
 
         {activeView === "dashboard" && (
-          <Dashboard
-            patients={assignment.patients} 
+          <Dashboard 
+            assignment={assignment}
           />
         )}
       </main>

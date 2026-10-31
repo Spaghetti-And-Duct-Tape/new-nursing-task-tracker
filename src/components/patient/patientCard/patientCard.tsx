@@ -1,4 +1,4 @@
-import { ArrowUpRight, Layers, Plus, Trash2 } from "lucide-react";
+import { ArrowUpRight, Clock, Layers, Plus, Trash2 } from "lucide-react";
 import type { Patient } from "../../../types/patient";
 
 import styles from "./patientCard.module.css";
@@ -7,51 +7,58 @@ import { useCurrentDate } from "../../../hooks/DateProvider";
 import { filterTaskCategories, isTaskFinished, organizeTasks } from "../../../utils/tasks/organizeTasks";
 import TaskCategories from "../../task/taskCategories/taskCategories";
 import { useState } from "react";
-import TaskItems from "../../task/taskItems/taskItems";
 import type { TaskCategory } from "../../../types/task";
 import { useAssignment } from "../../../hooks/AssignmentProvider";
 import AddTaskModal from "../../modals/taskModals/addTaskModal";
+import ShiftTimeLine from "../../task/shiftTimeline/shiftTimeline";
+import TaskItems from "../../task/taskItems/taskItems";
 
 interface PatientCardProps {
   patient: Patient;
+  shiftStart: Date;
+  shiftEnd: Date;
 }
 
 export default function PatientCard({
   patient,
+  shiftStart,
+  shiftEnd
 }: PatientCardProps) {
   const [isTaskFormOpen, setIsTaskFormOpen] = useState(false);
 
   const now = useCurrentDate();
   const {removePatient} = useAssignment();
+  const tasks = patient.taskInstances;
 
-  const tasks = patient.taskInstances
-  const organizedTasks = organizeTasks(now, tasks);
-
-  const [timeFilter, setTimeFilter] = useState<"hour" | "overdue" | "all">("hour");
+  const [selectedHour, setSeletedHour] = useState<number | "all">(
+    now.getHours()
+  );
   const [activeCategory, setActiveCategory] = useState<Exclude<TaskCategory, "chart"> | "all">("all");
 
-  const timedTasks = 
-    timeFilter === "hour" ?
-      organizedTasks.activeTasks :
-      timeFilter === "overdue" ?
-        organizedTasks.overdueTasks :
-        tasks;
+  const visibleTasks = selectedHour === "all"
+    ? tasks
+    : tasks.filter(task => 
+      new Date(task.scheduledAt).getHours() === selectedHour
+    );
 
-  
-  const categorizedTasks = 
+  const categorizedTasks =
     activeCategory === "all" ?
-      timedTasks :
-      filterTaskCategories(timedTasks, activeCategory);
+      visibleTasks :
+      filterTaskCategories(visibleTasks, activeCategory);
 
-  const displayedTasks = timeFilter === "hour" ?
+  const displayedTasks = selectedHour === "all" ?
+    categorizedTasks :
     [...categorizedTasks].sort((a, b) => {
       return Number(isTaskFinished(a)) - Number(isTaskFinished(b));
-    }) :
-    categorizedTasks;
+    });
 
-  const unfinishedTasks = timedTasks.filter(
+  const unfinishedTasks = visibleTasks.filter(
     task => !isTaskFinished(task)
   );
+
+
+  const organizedTasks = organizeTasks(now, tasks);
+
 
   return (
     <article
@@ -108,44 +115,38 @@ export default function PatientCard({
           <div className={styles.taskHeader}>
             <h4 className={styles.taskTitle}>Tasks</h4>
 
-            <button
-              type="button"
-              className={styles.addTaskButton}
-              aria-label="Add task"
-              onClick={() => setIsTaskFormOpen(true)}
-            >
-              <Plus size={18} /> Add
-            </button>
+            <div className={styles.taskActions}>
+              <button
+                type="button"
+                className={styles.nowButton}
+                onClick={() => setSeletedHour(now.getHours())}
+              >
+                <Clock size={18} />
+                Now
+              </button>
+              <button
+                type="button"
+                className={styles.addTaskButton}
+                aria-label="Add task"
+                onClick={() => setIsTaskFormOpen(true)}
+              >
+                <Plus size={18} /> Add
+              </button>
+            </div>
           </div>
 
-          <div className={styles.timeFilter}>
-            <button
-              type="button"
-              className={timeFilter === "hour" ? styles.activeTimeFilter : ""}
-              onClick={() => setTimeFilter("hour")}
-            >
-              This Hour
-            </button>
-            <button
-              type="button"
-              className={timeFilter === "overdue" ? styles.activeTimeFilter : ""}
-              onClick={() => setTimeFilter("overdue")}
-            >
-              Overdue 
-            </button>
-            <button
-              type="button"
-              className={timeFilter === "all" ? styles.activeTimeFilter : ""}
-              onClick={() => setTimeFilter("all")}
-            >
-              All hours
-            </button>
-          </div>
+          <ShiftTimeLine
+            tasks={tasks}
+            shiftStart={shiftStart}
+            shiftEnd={shiftEnd}
+            selectedHour={selectedHour}
+            onSelectedHour={setSeletedHour}
+          />
 
-          <TaskItems 
+          <TaskItems
             category={activeCategory}
-            timeFilter={timeFilter}
-            tasks={displayedTasks} 
+            selectedHour={selectedHour}
+            tasks={displayedTasks}
           />
         </section>
       </div>

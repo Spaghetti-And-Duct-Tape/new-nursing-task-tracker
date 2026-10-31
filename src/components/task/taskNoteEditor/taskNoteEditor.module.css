@@ -11,6 +11,13 @@
   border-radius: 0.5rem;
 }
 
+.noteHeading {
+  width: 100%;
+  color: var(--text-primary);
+  font-size: var(--font-sm);
+  text-align: center;
+}
+
 .noteEditor textarea {
   width: 100%;
   min-height: 4rem;
