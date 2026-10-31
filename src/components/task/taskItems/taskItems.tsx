@@ -13,23 +13,21 @@ import { TaskNoteEditor } from "../taskNoteEditor/taskNoteEditor";
 interface TaskItemsProps {
   tasks: TaskInstance[];
   category: Exclude<TaskCategory, "chart"> | "all",
-  timeFilter: "hour" | "overdue" | "all"
+  selectedHour: number | "all"
 };
 
 export default function TaskItems({
   tasks,
   category,
-  timeFilter
+  selectedHour
 }: TaskItemsProps) {
   const categoryLabel = 
     category === "all" ? "" : category
 
   const timeLabel = 
-    timeFilter === "hour"
-      ? "scheduled this hour"
-      : timeFilter === "overdue"
-        ? "overdue"
-        : "scheduled this shift";
+    selectedHour === "all" ? 
+    "scheduled this shift" : 
+    "scheduled this hour";
 
   return (
     <div className={styles.taskList}>
@@ -150,6 +148,7 @@ function TaskItem({
 
       {editingNote && (
         <TaskNoteEditor
+          name={task.name}
           note={task.note ?? ""}
           onSave={(note) => {
             updateTask({...task, note});

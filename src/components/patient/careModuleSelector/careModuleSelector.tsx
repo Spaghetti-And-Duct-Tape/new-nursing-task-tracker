@@ -16,16 +16,8 @@ export default function CareModuleSelector ({
   onChange
 }: CareModuleSelectorProps) {
 
-  // =========================
-  // Form State
-  // =========================
-
   const [search, setSearch] = useState("");
   const [showModuleList, setShowModuleList] = useState(false);
-
-  // =========================
-  // Derived State
-  // =========================
 
   const query = search.trim().toLowerCase();
 
@@ -33,6 +25,7 @@ export default function CareModuleSelector ({
     selectedModuleIds.includes(module.id)
   );
 
+  //Only shows unselected modules filtered by the query 
   const availableModules: CareModule[] = careModules.filter(module => 
     !selectedModuleIds.includes(module.id) &&
     module.name.toLowerCase().includes(query)

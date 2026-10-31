@@ -21,5 +21,7 @@
     
 
     min-height: 0;
+    max-width: 100dvw;
+    overflow-x: auto;
   }
 }

@@ -48,7 +48,7 @@ export function filterTaskCategories(
   return tasks.filter(
     task => task.category === category
   )
-}
+};
 
 export function currentHourTasks(
   tasks: TaskInstance[],
@@ -63,10 +63,6 @@ export function currentHourTasks(
       scheduled.getDate() === date.getDate() &&
       scheduled.getHours() === date.getHours();
 
-    const withinGracePeriod =
-      scheduled.getTime() <= date.getTime() &&
-      !isOverdue(task, date);
-
-    return sameHour || withinGracePeriod;
+    return sameHour;
   });
-}
+};

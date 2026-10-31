@@ -23,7 +23,9 @@ export default function AddPatientModal({
   onOpenChange,
   onAddPatient
 }: Props) {
+  //All care modules
   const careModules = getCareModuleLibrary();
+  //Care modules defaulted for every patient
   const defaultModules = getNurseConfig().modules;
 
   const [room, setRoom] = useState("");

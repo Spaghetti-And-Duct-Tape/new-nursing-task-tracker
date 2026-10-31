@@ -29,17 +29,17 @@ export function AddDefinitionForm({
     value: ""
   }
   ]);
-  const [interval, setInterval] = useState(0);
+  const [interval, setInterval] = useState<number | "">(1);
   const [intervalUnit, setIntervalUnit] = useState<"minutes" | "hours">("hours");
-  const [repeat, setRepeat] = useState(1);
+  const [repeat, setRepeat] = useState<number | "">(1);
 
   const [error, setError] = useState({
     name: "",
     message: ""
   });
 
-  const internvalMinutes = 
-    intervalUnit === "hours" ? interval * 60 : interval;
+  const intervalMinutes = 
+    (Number(interval) || 1) * (intervalUnit === "hours" ? 60 : 1);
 
   const currentTimes = times
     .filter(time => time.value.trim() !== "");
@@ -66,13 +66,13 @@ export function AddDefinitionForm({
       .map(time => toTimeString(time.value))
       .filter((time): time is TimeString => time !== null),
     offset: 0,
-    interval: internvalMinutes,
-    repeat
+    interval: intervalMinutes,
+    repeat: repeat || 1
   }, assignment.shiftStart, assignment.shiftEnd)
 
   const maxRepeat = getMaxRepeat(
     validTimes,
-    internvalMinutes,
+    intervalMinutes,
     assignment.shiftStart,
     assignment.shiftEnd
   );
@@ -130,13 +130,13 @@ export function AddDefinitionForm({
         message: "Value must be a valid time."
       };
 
-    if (!Number.isInteger(interval) || interval < 0)
+    if (interval === "" || !Number.isInteger(interval) || interval < 0)
       return {
         name: "interval",
         message: "Interval must be a non-negative whole number."
       };
 
-    if (!Number.isInteger(repeat) || repeat < 1)
+    if (repeat === "" || !Number.isInteger(repeat) || repeat < 1)
       return {
         name: "repeat",
         message: "Repeat must be at least 1."
@@ -163,8 +163,8 @@ export function AddDefinitionForm({
       schedule: {
         times: validTimes,
         offset: 0,
-        interval: internvalMinutes,
-        repeat
+        interval: intervalMinutes,
+        repeat: repeat || 1
       }
     };
 
@@ -202,9 +202,14 @@ export function AddDefinitionForm({
   };
 
   function handleIntervalChange(
-    newInterval: number,
+    newInterval: number | "",
     newUnit: "minutes" | "hours"
   ) {
+    if (newInterval === "") 
+      return setError({
+        name: "interval",
+        message: "Interval must be a non-negative whole number."
+      });
     const intervalMinutes =
       newUnit === "hours" ? newInterval * 60 : newInterval;
       
@@ -361,7 +366,7 @@ export function AddDefinitionForm({
 
             <div className={styles.field}>
               <label>
-                {repeat > 1 ? "Start Time(s)" : "Task Times"}
+                {repeat === "" || repeat < 2 ? "Task Time(s)" : "Start Time(s)"}
               </label>
 
               <div className={styles.timeInputs}>
@@ -417,12 +422,12 @@ export function AddDefinitionForm({
                   <input
                     id="task-interval"
                     type="number"
-                    min={0}
+                    min={1}
                     step={1}
                     value={interval}
                     onChange={(e) =>
                       handleIntervalChange(
-                        Number(e.target.value), 
+                        e.target.value === "" ? "" : Number(e.target.value), 
                         intervalUnit
                       )
                     }
@@ -437,7 +442,7 @@ export function AddDefinitionForm({
                     value={intervalUnit}
                     onChange={(e) =>
                       handleIntervalChange(
-                        interval, 
+                        interval || 1, 
                         e.target.value as "minutes" | "hours"
                       )
                     }
@@ -477,7 +482,9 @@ export function AddDefinitionForm({
                     step={1}
                     value={repeat}
                     onChange={(e) =>
-                      setRepeat(Number(e.target.value))
+                      setRepeat(
+                        e.target.value === "" ? "" : Number(e.target.value)
+                      )
                     }
                     aria-describedby={
                       error.name === "repeat"
@@ -494,7 +501,7 @@ export function AddDefinitionForm({
                     max={Math.max(1, maxRepeat)}
                     step={1}
                     value={Math.min(
-                      repeat,
+                      repeat || 1,
                       Math.max(1, maxRepeat)
                     )}
                     onChange={(e) =>

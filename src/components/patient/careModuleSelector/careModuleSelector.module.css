@@ -3,6 +3,9 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  
+  font: inherit;
+  font-size: var(--font-sm);
 }
 
 .moduleSelector > input {
@@ -14,9 +17,7 @@
 
   background: var(--bg-primary);
   color: var(--text-primary);
-
-  font: inherit;
-  font-size: var(--font-sm);
+  
   margin: 0.1rem;
 }
 
@@ -49,8 +50,6 @@
   font-weight: var(--weight-regular);
 }
 
-/* Scrollable module list */
-
 .moduleList {
   max-height: 12rem;
   overflow-y: auto;
@@ -58,10 +57,6 @@
   scrollbar-width: thin;
   scrollbar-color: var(--border-color) transparent;
 }
-
-/* =========================
-   Available Modules
-========================= */
 
 .moduleItem {
   display: flex;
@@ -104,10 +99,6 @@
   background: var(--bg-elevated);
   border-color: var(--accent-primary);
 }
-
-/* =========================
-   Selected Modules
-========================= */
 
 .selectedModule {
   display: flex;
